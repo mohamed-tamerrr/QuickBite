@@ -1,10 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/features/auth/view/login_view.dart';
+import 'package:hungry/features/auth/view/profile_view.dart';
+import 'package:hungry/features/auth/view/signup_view.dart';
+import 'package:hungry/features/cart/view/cart_view.dart';
+import 'package:hungry/features/home/view/home_view.dart';
+import 'package:hungry/features/orderHistory/view/order_history_view.dart';
+import 'package:hungry/splash.dart';
 
-class Root extends StatelessWidget {
+class Root extends StatefulWidget {
   const Root({super.key});
 
   @override
+  State<Root> createState() => _RootState();
+}
+
+class _RootState extends State<Root> {
+  late List<Widget> screens;
+  late PageController controller;
+  int currentScreen = 0;
+  @override
+  void initState() {
+    screens = [
+      HomeView(),
+      CartView(),
+      OrderHistoryView(),
+      ProfileView(),
+    ];
+    controller = PageController(initialPage: currentScreen);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: PageView(controller: controller, children: screens),
+
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: BottomNavigationBar(
+          // elevation: 0,
+          backgroundColor: Colors.transparent,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.grey.shade700,
+          currentIndex: currentScreen,
+          onTap: (index) {
+            setState(() {
+              currentScreen = index;
+              controller.jumpToPage(currentScreen);
+            });
+          },
+
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "Home",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart),
+              label: "Cart",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.history),
+              label: "Orders",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: "Profile",
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
