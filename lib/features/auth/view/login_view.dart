@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/features/auth/widgets/auth_btn.dart';
 import 'package:hungry/shared/custom_text.dart';
 import 'package:hungry/shared/custom_text_form_field.dart';
 
@@ -51,26 +50,11 @@ class LoginView extends StatelessWidget {
                     isPassword: true,
                   ),
                   Gap(30),
-                  GestureDetector(
+                  AuthBtn(
+                    text: 'Login',
                     onTap: () {
                       if (formKey.currentState!.validate()) {}
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      height: 55,
-                      width: double.infinity,
-                      child: Center(
-                        child: CustomText(
-                          fontSize: 15,
-                          text: 'Login',
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
                   ),
                 ],
               ),
