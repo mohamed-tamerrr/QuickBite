@@ -34,16 +34,20 @@ class _RootState extends State<Root> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(controller: controller, children: screens),
+      body: PageView(
+        controller: controller,
+        children: screens,
+        physics: NeverScrollableScrollPhysics(),
+      ),
 
       bottomNavigationBar: Container(
-        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: AppColors.primary,
           borderRadius: BorderRadius.circular(30),
         ),
         child: BottomNavigationBar(
-          // elevation: 0,
+          elevation: 0,
           backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.white,
