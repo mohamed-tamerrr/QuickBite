@@ -95,7 +95,7 @@ class _CartViewState extends State<CartView> {
             top: Radius.circular(20),
           ),
         ),
-        height: 120,
+        height: 100,
         padding: const EdgeInsets.all(20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
