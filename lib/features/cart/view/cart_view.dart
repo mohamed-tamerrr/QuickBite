@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/features/cart/widgets/cart_item.dart';
+import 'package:hungry/features/checkout/view/checkout_view.dart';
 import 'package:hungry/shared/custom_button.dart';
 import 'package:hungry/shared/custom_text.dart';
 
@@ -95,7 +96,7 @@ class _CartViewState extends State<CartView> {
             top: Radius.circular(20),
           ),
         ),
-        height: 100,
+        height: 120,
         padding: const EdgeInsets.all(20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,10 +120,19 @@ class _CartViewState extends State<CartView> {
             ),
 
             /// Checkout Button
-            CustomButton(text: 'Checkout', onTap: () {}),
+            CustomButton(
+              text: 'Checkout',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const CheckoutView(),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
-}
+} // todo : dialog
