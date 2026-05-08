@@ -10,18 +10,25 @@ class AuthBtn extends StatelessWidget {
 
     required this.text,
     required this.onTap,
+    this.textColor,
+    this.color,
+    this.borderColor,
   }) : super(key: key);
 
   final String text;
   final void Function() onTap;
+  final Color? textColor;
+  final Color? color;
+  final Color? borderColor;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
+          border: Border.all(color: borderColor ?? Colors.white),
           borderRadius: BorderRadius.circular(7),
-          color: Colors.white,
+          color: color ?? AppColors.primary,
         ),
         height: 55,
         width: double.infinity,
@@ -30,7 +37,7 @@ class AuthBtn extends StatelessWidget {
             fontSize: 15,
             text: text,
             fontWeight: FontWeight.w800,
-            color: AppColors.primary,
+            color: textColor ?? AppColors.primary,
           ),
         ),
       ),

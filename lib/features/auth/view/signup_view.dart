@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/features/auth/widgets/auth_btn.dart';
+import 'package:hungry/shared/custom_text.dart';
 import 'package:hungry/shared/custom_text_form_field.dart';
 
 class SignupView extends StatelessWidget {
@@ -18,47 +20,76 @@ class SignupView extends StatelessWidget {
 
     return Scaffold(
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-
-          child: Form(
-            child: Column(
-              children: [
-                Gap(100),
-                SvgPicture.asset('assets/logo/logo.svg'),
-                Gap(60),
-                CustomTextFormField(
-                  controller: name,
-                  hintText: 'Full Name',
-                  isPassword: false,
+        child: Form(
+          child: Column(
+            children: [
+              Gap(200),
+              SvgPicture.asset(
+                'assets/logo/logo.svg',
+                color: AppColors.primary,
+              ),
+              Gap(10),
+              CustomText(text: 'Welcome to our Food App !!'),
+              Gap(60),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                    color: AppColors.primary,
+                  ),
+                  child: Column(
+                    children: [
+                      Gap(30),
+                      CustomTextFormField(
+                        controller: name,
+                        hintText: 'Full Name',
+                        isPassword: false,
+                      ),
+                      Gap(15),
+                      CustomTextFormField(
+                        controller: email,
+                        hintText: 'Email Address',
+                        isPassword: false,
+                      ),
+                      Gap(15),
+                      CustomTextFormField(
+                        controller: password,
+                        hintText: 'Password',
+                        isPassword: true,
+                      ),
+                      Gap(15),
+                      CustomTextFormField(
+                        controller: confirmPassword,
+                        hintText: 'Confirm Password',
+                        isPassword: true,
+                      ),
+                      Gap(30),
+                      AuthBtn(
+                        textColor: Colors.white,
+                        text: 'Sign Up',
+                        onTap: () {
+                          if (formKey.currentState!
+                              .validate()) {}
+                        },
+                      ),
+                      Gap(20),
+                      AuthBtn(
+                        color: Colors.white,
+                        textColor: AppColors.primary,
+                        text: 'Go To Login ?',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                Gap(15),
-                CustomTextFormField(
-                  controller: email,
-                  hintText: 'Email Address',
-                  isPassword: false,
-                ),
-                Gap(15),
-                CustomTextFormField(
-                  controller: password,
-                  hintText: 'Password',
-                  isPassword: true,
-                ),
-                Gap(15),
-                CustomTextFormField(
-                  controller: confirmPassword,
-                  hintText: 'Confirm Password',
-                  isPassword: true,
-                ),
-                Gap(30),
-                AuthBtn(
-                  text: 'Sign Up',
-                  onTap: () {
-                    if (formKey.currentState!.validate()) {}
-                  },
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
