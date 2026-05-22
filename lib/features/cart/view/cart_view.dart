@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/features/cart/widgets/cart_item.dart';
-import 'package:hungry/features/checkout/view/checkout_view.dart';
-import 'package:hungry/shared/custom_button.dart';
-import 'package:hungry/shared/custom_text.dart';
+
+import '../widgets/cart_item.dart';
+import '../../checkout/view/checkout_view.dart';
+import '../../../shared/custom_button.dart';
+import '../../../shared/custom_text.dart';
 
 class CartView extends StatefulWidget {
   const CartView({super.key});

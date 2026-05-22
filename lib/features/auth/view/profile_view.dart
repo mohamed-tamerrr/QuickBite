@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/shared/custom_text.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../shared/custom_text.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});

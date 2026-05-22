@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/features/home/widgets/card_item.dart';
-import 'package:hungry/features/home/widgets/food_category.dart';
-import 'package:hungry/features/home/widgets/search_field.dart';
-import 'package:hungry/features/home/widgets/user_header.dart';
-import 'package:hungry/features/product/view/product_details_view.dart';
+import '../widgets/card_item.dart';
+import '../widgets/food_category.dart';
+import '../widgets/search_field.dart';
+import '../widgets/user_header.dart';
+import '../../product/view/product_details_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

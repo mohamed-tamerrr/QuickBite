@@ -1,21 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/features/auth/view/signup_view.dart';
-import 'package:hungry/features/auth/widgets/auth_btn.dart';
-import 'package:hungry/root.dart';
-import 'package:hungry/shared/custom_text.dart';
-import 'package:hungry/shared/custom_text_form_field.dart';
+import 'package:hungry/core/network/api_exceptions.dart';
+import 'package:hungry/features/auth/data/auth_repo.dart';
+import 'package:hungry/shared/custom_snack.dart';
+import '../../../core/constants/app_colors.dart';
+import 'signup_view.dart';
+import '../widgets/auth_btn.dart';
+import '../../../root.dart';
+import '../../../shared/custom_text.dart';
+import '../../../shared/custom_text_form_field.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
   @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  bool isLoading = false;
+  final AuthRepo authRepo = AuthRepo();
+
+  TextEditingController email = TextEditingController();
+
+  TextEditingController password = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  Future<void> login() async {
+    setState(() => isLoading = true);
+    if (formKey.currentState!.validate()) {
+      try {
+        final user = await authRepo.login(
+          email: email.text.trim(),
+          password: password.text.trim(),
+        );
+        if (user != null) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => Root()),
+          );
+          setState(() => isLoading = false);
+        }
+      } catch (e) {
+        setState(() => isLoading = false);
+        String error = 'unhandled error';
+        if (e is Failure) {
+          error = e.toString();
+        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(customSnack(error));
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -64,34 +103,20 @@ class LoginView extends StatelessWidget {
                           isPassword: true,
                         ),
                         Gap(30),
-                        AuthBtn(
-                          textColor: Colors.white,
-                          text: 'Login',
-                          onTap: () {
-                            if (formKey.currentState!
-                                .validate()) {}
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const Root(),
+                        isLoading
+                            ? CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : AuthBtn(
+                                textColor: Colors.white,
+                                text: 'Login',
+                                onTap: login,
                               ),
-                            );
-                          },
-                        ),
                         Gap(20),
                         AuthBtn(
                           color: Colors.white,
                           text: 'Create an account ?',
-                          onTap: () {
-                            if (formKey.currentState!
-                                .validate()) {}
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const SignupView(),
-                              ),
-                            );
-                          },
+                          onTap: () {},
                         ),
                       ],
                     ),

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:hungry/root.dart';
-import 'package:hungry/splash.dart';
+import 'root.dart';
+import 'splash.dart';
 
 void main() {
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
   runApp(Hungry());
 }
 

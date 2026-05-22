@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/features/auth/widgets/auth_btn.dart';
-import 'package:hungry/shared/custom_text.dart';
-import 'package:hungry/shared/custom_text_form_field.dart';
+import '../../../core/constants/app_colors.dart';
+import '../widgets/auth_btn.dart';
+import '../../../shared/custom_text.dart';
+import '../../../shared/custom_text_form_field.dart';
 
 class SignupView extends StatelessWidget {
   const SignupView({super.key});
