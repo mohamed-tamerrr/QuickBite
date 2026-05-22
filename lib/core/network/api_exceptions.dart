@@ -25,6 +25,12 @@ class ApiExceptions extends Failure {
       );
     }
 
+    if (statusCode == 302) {
+      return ApiExceptions(
+        errorMassage: 'This Email Already Taken',
+      );
+    }
+
     switch (dioexp.type) {
       case DioExceptionType.connectionTimeout:
         return ApiExceptions(

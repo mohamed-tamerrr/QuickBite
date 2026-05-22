@@ -116,7 +116,15 @@ class _LoginViewState extends State<LoginView> {
                         AuthBtn(
                           color: Colors.white,
                           text: 'Create an account ?',
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    SignupView(),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

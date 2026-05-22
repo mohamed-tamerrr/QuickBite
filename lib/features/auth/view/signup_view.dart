@@ -1,26 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/network/api_exceptions.dart';
+import 'package:hungry/features/auth/data/auth_repo.dart';
+import 'package:hungry/shared/custom_snack.dart';
 import '../../../core/constants/app_colors.dart';
 import '../widgets/auth_btn.dart';
 import '../../../shared/custom_text.dart';
 import '../../../shared/custom_text_form_field.dart';
 
-class SignupView extends StatelessWidget {
+class SignupView extends StatefulWidget {
   const SignupView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
-    TextEditingController confirmPassword =
-        TextEditingController();
-    TextEditingController name = TextEditingController();
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  State<SignupView> createState() => _SignupViewState();
+}
 
+class _SignupViewState extends State<SignupView> {
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController confirmPassword =
+      TextEditingController();
+  TextEditingController name = TextEditingController();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  AuthRepo authRepo = AuthRepo();
+  bool isLoading = false;
+
+  Future<void> signup() async {
+    setState(() => isLoading = true);
+    if (formKey.currentState!.validate()) {
+      try {
+        final user = await authRepo.signup(
+          email: email.text.trim(),
+          password: password.text.trim(),
+          name: name.text.trim(),
+        );
+        if (user != null) {
+          Navigator.pop(context);
+          setState(() => isLoading = false);
+        }
+      } catch (e) {
+        setState(() => isLoading = false);
+        String error = 'unhandled error';
+        if (e is Failure) {
+          error = e.toString();
+        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(customSnack(error));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Form(
+          key: formKey,
           child: Column(
             children: [
               Gap(200),
@@ -68,14 +106,15 @@ class SignupView extends StatelessWidget {
                         isPassword: true,
                       ),
                       Gap(30),
-                      AuthBtn(
-                        textColor: Colors.white,
-                        text: 'Sign Up',
-                        onTap: () {
-                          if (formKey.currentState!
-                              .validate()) {}
-                        },
-                      ),
+                      isLoading
+                          ? CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : AuthBtn(
+                              textColor: Colors.white,
+                              text: 'Sign Up',
+                              onTap: signup,
+                            ),
                       Gap(20),
                       AuthBtn(
                         color: Colors.white,

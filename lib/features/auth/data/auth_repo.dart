@@ -52,29 +52,46 @@ class AuthRepo {
     }
   }
 
-  /// Register
-  // Future<UserModel> register({
-  //   required String name,
-  //   required String email,
-  //   required String password,
-  // }) async {
-  //   final response = await _apiService.post(_registerEndpoint, {
-  //     'name': name,
-  //     'email': email,
-  //     'password': password,
-  //   });
+  /// Signup
+  Future<UserModel> signup({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        _registerEndpoint,
+        {'email': email, 'password': password, 'name': name},
+      );
 
-  //   if (response is ApiExceptions) {
-  //     throw response;
-  //   }
+      if (response is Failure) {
+        throw response;
+      }
 
-  //   final userJson = _extractUserJson(response);
-  //   final user = UserModel.fromJson(userJson);
-  //   if (user.token != null && user.token!.isNotEmpty) {
-  //     await PrefHelpers.saveToken(user.token!);
-  //   }
-  //   return user;
-  // }
+      if (response is Map<String, dynamic>) {
+        final msg = response['message'];
+        final code = response['code'];
+        final data = response['data'];
+        final coder = int.tryParse(code);
+        if (coder != 200 || data == null) {
+          throw Failure(errorMassage: msg);
+        }
+        final user = UserModel.fromJson(response['data']);
+        if (user.token != null && user.token!.isNotEmpty) {
+          await PrefHelpers.saveToken(user.token!);
+        }
+        return user;
+      } else {
+        throw Failure(
+          errorMassage: 'Unexpected error from server',
+        );
+      }
+    } on DioException catch (e) {
+      throw ApiExceptions.fromDioException(e);
+    } catch (e) {
+      throw Failure(errorMassage: e.toString());
+    }
+  }
 
   // /// Get Profile Data
   // Future<UserModel> getProfile() async {
