@@ -10,11 +10,14 @@ class AuthRepo {
 
   static const String _loginEndpoint = '/login';
   static const String _registerEndpoint = '/register';
+  static const String _getProfile = '/profile';
+  static const String _updateProfile = '/update-profile';
   static const String _logout = '/logout';
-  static const String getProfileData = '/profile';
+  bool isGuest = false;
+  UserModel? _currentUser;
 
   /// Login
-  Future<UserModel> login({
+  Future<UserModel?> login({
     required String email,
     required String password,
   }) async {
@@ -39,6 +42,8 @@ class AuthRepo {
         if (user.token != null && user.token!.isNotEmpty) {
           await PrefHelpers.saveToken(user.token!);
         }
+        isGuest = false;
+        _currentUser = user;
         return user;
       } else {
         throw Failure(
@@ -53,7 +58,7 @@ class AuthRepo {
   }
 
   /// Signup
-  Future<UserModel> signup({
+  Future<UserModel?> signup({
     required String name,
     required String email,
     required String password,
@@ -80,6 +85,8 @@ class AuthRepo {
         if (user.token != null && user.token!.isNotEmpty) {
           await PrefHelpers.saveToken(user.token!);
         }
+        isGuest = false;
+        _currentUser = user;
         return user;
       } else {
         throw Failure(
@@ -93,62 +100,114 @@ class AuthRepo {
     }
   }
 
-  // /// Get Profile Data
-  // Future<UserModel> getProfile() async {
-  //   final response = await _apiService.get(_profileEndpoint);
+  /// Get Profile Data
+  Future<UserModel?> getProfileData() async {
+    try {
+      final token = await PrefHelpers.getToken();
+      if (token == null || token == 'guest') {
+        return null;
+      }
 
-  //   if (response is ApiExceptions) {
-  //     throw response;
-  //   }
+      final response = await _apiService.get(_getProfile);
+      final user = UserModel.fromJson(response['data']);
+      _currentUser = user;
+      return user;
+    } on DioException catch (e) {
+      throw ApiExceptions(errorMassage: e.toString());
+    } catch (e) {
+      throw Failure(errorMassage: e.toString());
+    }
+  }
 
-  //   final userJson = _extractUserJson(response);
-  //   return UserModel.fromJson(userJson);
-  // }
+  /// Update Profile Data
+  Future<UserModel?> updateProfile({
+    required String name,
+    required String email,
+    String? address,
+    String? image,
+    String? visa,
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        'name': name,
+        'email': email,
+        'address': address,
+        if (image != null && image.isNotEmpty)
+          'image': await MultipartFile.fromFile(
+            image,
+            filename: image.split('/').last,
+          ),
+        if (visa != null && visa.isNotEmpty) 'Visa': visa,
+      });
+      final response = await _apiService.post(
+        _updateProfile,
+        formData,
+      );
+      if (response is Failure) {
+        throw response;
+      }
 
-  // /// Update Profile Data
-  // Future<UserModel> updateProfile({
-  //   required String name,
-  //   required String email,
-  //   String? address,
-  //   String? image,
-  //   String? visa,
-  // }) async {
-  //   final response = await _apiService
-  //       .put(_updateProfileEndpoint, {
-  //         'name': name,
-  //         'email': email,
-  //         if (address != null) 'address': address,
-  //         if (image != null) 'image': image,
-  //         if (visa != null) 'visa': visa,
-  //       });
+      if (response is Map<String, dynamic>) {
+        final msg = response['message'];
+        final code = response['code'];
+        final data = response['data'];
 
-  //   if (response is ApiExceptions) {
-  //     throw response;
-  //   }
+        if (code != 200 && code != 201) {
+          throw Failure(errorMassage: msg ?? 'Unknown error');
+        }
+      }
+      final updatedUser = UserModel.fromJson(response['data']);
+      _currentUser = updatedUser;
+      return updatedUser;
+    } on DioException catch (e) {
+      throw ApiExceptions.fromDioException(e);
+    } catch (e) {
+      throw Failure(errorMassage: e.toString());
+    }
+  }
 
-  //   final userJson = _extractUserJson(response);
-  //   return UserModel.fromJson(userJson);
-  // }
+  /// LogOut
+  Future<void> logout() async {
+    final response = await _apiService.post(_logout, {});
+    if (response['data'] != null) {
+      throw Failure(errorMassage: 'Error in Logout !!');
+    }
+    await PrefHelpers.clearToken();
+    _currentUser = null;
+    isGuest = true;
+  }
 
-  // /// LogOut
-  // Future<void> logout() async {
-  //   await PrefHelpers.clearToken();
-  // }
+  /// AutoLogin
+  Future<UserModel?> autoLogin() async {
+    final token = await PrefHelpers.getToken();
 
-  // Map<String, dynamic> _extractUserJson(dynamic response) {
-  //   if (response is Map<String, dynamic>) {
-  //     if (response['data'] is Map<String, dynamic>) {
-  //       return Map<String, dynamic>.from(
-  //         response['data'] as Map,
-  //       );
-  //     }
-  //     if (response['user'] is Map<String, dynamic>) {
-  //       return Map<String, dynamic>.from(
-  //         response['user'] as Map,
-  //       );
-  //     }
-  //     return Map<String, dynamic>.from(response);
-  //   }
-  //   throw ApiExceptions(errorMassage: 'Invalid response format');
-  // }
+    if (token == null || token == 'guest') {
+      _currentUser = null;
+      return null;
+    }
+
+    isGuest = false;
+
+    try {
+      final user = await getProfileData();
+      _currentUser = user;
+      return user;
+    } catch (e) {
+      await PrefHelpers.clearToken();
+      isGuest = true;
+      _currentUser = null;
+      return null;
+    }
+  }
+
+  /// continue as guest
+  Future<void> continueAsGuest() async {
+    isGuest = true;
+    _currentUser = null;
+    await PrefHelpers.saveToken('guest');
+  }
+
+  UserModel? get currentUser => _currentUser;
+
+  bool get isLoggedIn => !isGuest && _currentUser != null;
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/features/auth/data/auth_repo.dart';
 import 'core/constants/app_colors.dart';
 import 'features/auth/view/login_view.dart';
 import 'root.dart';
@@ -19,6 +20,42 @@ class _SplashViewState extends State<SplashView>
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
+  final AuthRepo _authRepo = AuthRepo();
+
+  /// Auto Login
+  Future<void> _checkLogin() async {
+    try {
+      final user = await _authRepo.autoLogin();
+      if (!mounted) return;
+      if (_authRepo.isGuest) {
+        print('test guest');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (c) => Root()),
+        );
+      } else if (user != null) {
+        print('test');
+        print(_authRepo.currentUser);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (c) => Root()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (c) => LoginView()),
+        );
+      }
+    } catch (e) {
+      debugPrint('Auto login failed: $e');
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginView()),
+        );
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -53,16 +90,7 @@ class _SplashViewState extends State<SplashView>
 
     _controller.forward();
 
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginView(),
-          ),
-        );
-      }
-    });
+    Future.delayed(const Duration(seconds: 2), _checkLogin);
   }
 
   @override

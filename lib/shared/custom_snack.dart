@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'custom_text.dart';
 
-SnackBar customSnack(String errorMsg) {
+SnackBar customSnack({required String msg, Color? color}) {
   return SnackBar(
     padding: const EdgeInsets.symmetric(
       horizontal: 10,
@@ -16,14 +16,14 @@ SnackBar customSnack(String errorMsg) {
     ),
     elevation: 10,
     behavior: SnackBarBehavior.floating,
-    backgroundColor: Colors.red.shade900,
+    backgroundColor: color ?? Colors.red.shade900,
     content: Row(
       children: [
         const Icon(CupertinoIcons.info, color: Colors.white),
         const Gap(14),
         Expanded(
           child: CustomText(
-            text: errorMsg,
+            text: msg,
             color: Colors.white,
             fontSize: 10,
             fontWeight: FontWeight.w600,

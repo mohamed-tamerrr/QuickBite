@@ -48,9 +48,16 @@ class _LoginViewState extends State<LoginView> {
         }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(customSnack(error));
+        ).showSnackBar(customSnack(msg: error));
       }
     }
+  }
+
+  @override
+  void initState() {
+    email.text = "tamer@gmail.com";
+    password.text = "123456789";
+    super.initState();
   }
 
   @override

@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/network/api_exceptions.dart';
 import 'package:hungry/features/auth/data/auth_repo.dart';
 import 'package:hungry/features/auth/data/user_model.dart';
+import 'package:hungry/features/auth/view/login_view.dart';
+import 'package:hungry/shared/custom_button.dart';
 import 'package:hungry/shared/custom_snack.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../shared/custom_text.dart';
@@ -21,25 +26,11 @@ class _ProfileViewState extends State<ProfileView> {
   TextEditingController email = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController visa = TextEditingController();
+  bool isLoading = false;
+
+  String? selectedImage;
   UserModel? userModel;
   final AuthRepo _authRepo = AuthRepo();
-
-  Future<void> getProfileData() async {
-    try {
-      final user = await _authRepo.getProfileData();
-      setState(() {
-        userModel = user;
-      });
-    } catch (e) {
-      String error = 'Error in profile';
-      if (e is Failure) {
-        error = e.errorMassage;
-      }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(customSnack(error));
-    }
-  }
 
   @override
   void initState() {
@@ -60,6 +51,82 @@ class _ProfileViewState extends State<ProfileView> {
     email.dispose();
     address.dispose();
     super.dispose();
+  }
+
+  /// Pick Image
+  Future<void> pickImage() async {
+    final pickedImage = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedImage != null) {
+      selectedImage = pickedImage.path;
+    }
+  }
+
+  /// GetProfile
+  Future<void> getProfileData() async {
+    try {
+      final user = await _authRepo.getProfileData();
+      setState(() {
+        userModel = user;
+      });
+    } catch (e) {
+      String error = 'Error in profile';
+      if (e is Failure) {
+        error = e.errorMassage;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(customSnack(msg: error));
+    }
+  }
+
+  /// Update Profile
+  Future<void> updataProfileData() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      final user = await _authRepo.updateProfile(
+        name: name.text.trim(),
+        email: email.text.trim(),
+        address: address.text.trim(),
+        visa: visa.text.trim(),
+        image: selectedImage,
+      );
+      setState(() {
+        userModel = user;
+        isLoading = false;
+      });
+      await getProfileData();
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnack(msg: 'Profile Updated', color: Colors.green),
+      );
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      String errMsg = 'Error';
+      if (e is Failure) errMsg = e.errorMassage;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(customSnack(msg: errMsg));
+    }
+  }
+
+  /// Logout
+  Future<void> logout() async {
+    try {
+      await _authRepo.logout();
+      await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginView()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnack(msg: e.toString(), color: Colors.red),
+      );
+    }
   }
 
   @override
@@ -107,20 +174,13 @@ class _ProfileViewState extends State<ProfileView> {
                 enabled: userModel == null,
                 child: Column(
                   children: [
+                    /// Image
                     Center(
                       child: Container(
                         height: 120,
                         width: 120,
+                        clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
-                          image:
-                              userModel?.image != null &&
-                                  userModel!.image!.isNotEmpty
-                              ? DecorationImage(
-                                  image: NetworkImage(
-                                    userModel!.image!,
-                                  ),
-                                )
-                              : null,
                           // borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: Colors.white,
@@ -129,19 +189,52 @@ class _ProfileViewState extends State<ProfileView> {
                           shape: BoxShape.circle,
                           color: Colors.grey.shade300,
                         ),
+                        child: selectedImage != null
+                            ? Image(
+                                image: FileImage(
+                                  File(selectedImage!),
+                                ),
+                              )
+                            : userModel?.image != null &&
+                                  userModel!.image!.isNotEmpty
+                            ? Image.network(
+                                userModel!.image!,
+                                errorBuilder:
+                                    (
+                                      context,
+                                      error,
+                                      stackTrace,
+                                    ) => Icon(Icons.person),
+                              )
+                            : Icon(Icons.person),
                       ),
                     ),
+                    Gap(10),
+
+                    /// Upload Image
+                    CustomButton(
+                      onTap: pickImage,
+                      width: 200,
+                      text: 'Upload Image',
+                      color: Colors.deepPurple,
+                    ),
                     Gap(20),
+
+                    /// Name
                     CustomProfileField(
                       label: 'Name',
                       controller: name,
                     ),
                     Gap(20),
+
+                    /// Email
                     CustomProfileField(
                       label: 'Email',
                       controller: email,
                     ),
                     Gap(20),
+
+                    /// Address
                     CustomProfileField(
                       label: 'Address',
                       controller: address,
@@ -153,11 +246,15 @@ class _ProfileViewState extends State<ProfileView> {
                     Gap(8),
                     userModel?.visa == null ||
                             userModel!.visa!.isEmpty
-                        ? CustomProfileField(
+                        ?
+                          /// Add Visa
+                          CustomProfileField(
                             label: 'Add Visa Card',
                             controller: visa,
                           )
-                        : ListTile(
+                        :
+                          /// Visa Card
+                          ListTile(
                             onTap: () {},
                             contentPadding:
                                 const EdgeInsets.symmetric(
@@ -201,55 +298,70 @@ class _ProfileViewState extends State<ProfileView> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 // Left Button: "Edit Profile"
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 18,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Edit Profile",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(Icons.edit, color: Colors.white),
-                    ],
+                GestureDetector(
+                  onTap: updataProfileData,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 18,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: isLoading
+                        ? CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : Row(
+                            children: [
+                              Text(
+                                "Edit Profile",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
                   ),
                 ),
                 SizedBox(width: 16), // Space between buttons
                 // Right Button: "Log out"
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 18,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: AppColors.primary,
-                      width: 2,
+                GestureDetector(
+                  onTap: logout,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 18,
                     ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Log out",
-                        style: TextStyle(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Log out",
+                          style: TextStyle(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(
+                          Icons.logout,
                           color: AppColors.primary,
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(
-                        Icons.logout,
-                        color: AppColors.primary,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

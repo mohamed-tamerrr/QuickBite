@@ -8,17 +8,16 @@ class CustomTextFormField extends StatefulWidget {
     required this.isPassword,
     required this.controller,
   });
+
   final String hintText;
   final bool isPassword;
   final TextEditingController controller;
 
   @override
-  State<CustomTextFormField> createState() =>
-      _CustomTextFormFieldState();
+  State<CustomTextFormField> createState() => _CustomTextFormFieldState();
 }
 
-class _CustomTextFormFieldState
-    extends State<CustomTextFormField> {
+class _CustomTextFormFieldState extends State<CustomTextFormField> {
   late bool _isObscure;
 
   @override
@@ -46,9 +45,7 @@ class _CustomTextFormFieldState
                   _toggleObscure();
                 },
                 icon: Icon(
-                  _isObscure
-                      ? Icons.visibility_off
-                      : Icons.visibility,
+                  _isObscure ? Icons.visibility_off : Icons.visibility,
                   color: Colors.grey,
                 ),
               )

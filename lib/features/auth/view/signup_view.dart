@@ -48,7 +48,7 @@ class _SignupViewState extends State<SignupView> {
         }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(customSnack(error));
+        ).showSnackBar(customSnack(msg: error));
       }
     }
   }
@@ -100,6 +100,7 @@ class _SignupViewState extends State<SignupView> {
                         isPassword: true,
                       ),
                       Gap(15),
+
                       CustomTextFormField(
                         controller: confirmPassword,
                         hintText: 'Confirm Password',
