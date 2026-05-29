@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import 'root.dart';
 import 'splash.dart';
 
 void main() {
