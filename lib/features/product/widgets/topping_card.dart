@@ -36,7 +36,9 @@ class ToppingCard extends StatelessWidget {
                 ),
               ],
             ),
-            child: Center(child: Image.asset(image, height: 55)),
+            child: Center(
+              child: Image.network(image, height: 55),
+            ),
           ),
 
           // 🔽 Bottom (Text + button)
