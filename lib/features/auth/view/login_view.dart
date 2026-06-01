@@ -26,6 +26,8 @@ class _LoginViewState extends State<LoginView> {
 
   TextEditingController password = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  /// Login
   Future<void> login() async {
     setState(() => isLoading = true);
     if (formKey.currentState!.validate()) {
@@ -65,79 +67,136 @@ class _LoginViewState extends State<LoginView> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                Gap(200),
-                SvgPicture.asset(
-                  'assets/logo/logo.svg',
-                  color: AppColors.primary,
-                ),
-                Gap(10),
-                CustomText(
-                  text:
-                      'Welcome Back , Discover the best food around you',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.primary,
-                ),
-                Gap(70),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                      ),
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 24,
+            ),
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 20),
+
+                  /// Logo
+                  Center(
+                    child: SvgPicture.asset(
+                      'assets/logo/logo.svg',
                       color: AppColors.primary,
+                      width: 92,
+                    ),
+                  ),
+                  const Gap(18),
+                  Center(
+                    child: CustomText(
+                      text: 'Welcome Back',
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const Gap(8),
+                  Center(
+                    child: CustomText(
+                      text: 'Discover the best food around you',
+                      fontSize: 15,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const Gap(28),
+
+                  /// Card
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppColors.card,
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.textPrimary
+                              .withValues(alpha: 0.08),
+                          blurRadius: 24,
+                          offset: const Offset(0, 12),
+                        ),
+                      ],
                     ),
                     child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.stretch,
                       children: [
-                        Gap(30),
+                        CustomText(
+                          text: 'Sign in to continue',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                        const Gap(24),
+
+                        /// Email
                         CustomTextFormField(
                           controller: email,
                           hintText: 'Email Address',
                           isPassword: false,
                         ),
-                        Gap(20),
+                        const Gap(18),
+
+                        /// Password
                         CustomTextFormField(
                           controller: password,
                           hintText: 'Password',
                           isPassword: true,
                         ),
-                        Gap(30),
+                        const Gap(24),
                         isLoading
-                            ? CircularProgressIndicator(
-                                color: Colors.white,
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primary,
+                                ),
                               )
-                            : AuthBtn(
+                            :
+                              /// Login
+                              AuthBtn(
                                 textColor: Colors.white,
                                 text: 'Login',
                                 onTap: login,
                               ),
-                        Gap(20),
-                        AuthBtn(
-                          color: Colors.white,
-                          text: 'Create an account ?',
-                          onTap: () {
+                        const Gap(16),
+
+                        /// Creat Account
+                        TextButton(
+                          onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    SignupView(),
+                                    const SignupView(),
                               ),
                             );
                           },
+                          style: TextButton.styleFrom(
+                            backgroundColor: AppColors.primary
+                                .withValues(alpha: .08),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(16),
+                            ),
+                            foregroundColor: AppColors.primary,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16,
+                            ),
+                          ),
+                          child: const CustomText(
+                            text: 'Create an account ?',
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -50,7 +50,7 @@ class _RootState extends State<Root> {
           backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.grey.shade700,
+          unselectedItemColor: AppColors.textSecondary,
           currentIndex: currentScreen,
           onTap: (index) {
             setState(() {

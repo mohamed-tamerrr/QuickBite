@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -7,7 +6,7 @@ import 'package:hungry/core/network/api_exceptions.dart';
 import 'package:hungry/features/auth/data/auth_repo.dart';
 import 'package:hungry/features/auth/data/user_model.dart';
 import 'package:hungry/features/auth/view/login_view.dart';
-import 'package:hungry/shared/custom_button.dart';
+import 'package:hungry/features/auth/widgets/custom_profile_field.dart';
 import 'package:hungry/shared/custom_snack.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -132,14 +131,14 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      color: Colors.red,
+      color: AppColors.primary,
       onRefresh: () async {
         await getProfileData();
       },
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.background,
           appBar: AppBar(
             backgroundColor: AppColors.primary,
             elevation: 0,
@@ -150,141 +149,228 @@ class _ProfileViewState extends State<ProfileView> {
                 color: Colors.white,
               ),
             ),
+            title: const CustomText(text: 'Profile'),
             actions: [
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8.0,
                   vertical: 8,
                 ),
+
+                /// Settings
                 child: SvgPicture.asset(
                   'assets/settings.svg',
                   width: 20,
+                  color: Colors.white,
                 ),
               ),
             ],
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 12.0,
-              vertical: 8,
+              horizontal: 16.0,
+              vertical: 12,
             ),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Skeletonizer(
                 enabled: userModel == null,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    /// Image
+                    const SizedBox(height: 8),
                     Center(
-                      child: Container(
-                        height: 120,
-                        width: 120,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          // borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 2,
+                      ///   profile picture
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            height: 130,
+                            width: 130,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.primary,
+                                width: 3,
+                              ),
+                              shape: BoxShape.circle,
+                              color: AppColors.card,
+                            ),
+                            child: ClipOval(
+                              child: selectedImage != null
+                                  ? Image.file(
+                                      File(selectedImage!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : userModel?.image != null &&
+                                        userModel!
+                                            .image!
+                                            .isNotEmpty
+                                  ? Image.network(
+                                      userModel!.image!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (
+                                            context,
+                                            error,
+                                            stackTrace,
+                                          ) => const Icon(
+                                            Icons.person,
+                                            size: 60,
+                                            color: AppColors
+                                                .textSecondary,
+                                          ),
+                                    )
+                                  : const Icon(
+                                      Icons.person,
+                                      size: 60,
+                                      color: AppColors
+                                          .textSecondary,
+                                    ),
+                            ),
                           ),
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade300,
-                        ),
-                        child: selectedImage != null
-                            ? Image(
-                                image: FileImage(
-                                  File(selectedImage!),
-                                ),
-                              )
-                            : userModel?.image != null &&
-                                  userModel!.image!.isNotEmpty
-                            ? Image.network(
-                                userModel!.image!,
-                                errorBuilder:
-                                    (
-                                      context,
-                                      error,
-                                      stackTrace,
-                                    ) => Icon(Icons.person),
-                              )
-                            : Icon(Icons.person),
+
+                          /// Pick Image
+                          GestureDetector(
+                            onTap: pickImage,
+                            child: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: AppColors.primary,
+                              child: const Icon(
+                                Icons.camera_alt,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Gap(10),
-
-                    /// Upload Image
-                    CustomButton(
-                      onTap: pickImage,
-                      width: 200,
-                      text: 'Upload Image',
-                      color: Colors.deepPurple,
+                    const Gap(16),
+                    CustomText(
+                      text: 'My Profile',
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
                     ),
-                    Gap(20),
-
-                    /// Name
-                    CustomProfileField(
-                      label: 'Name',
-                      controller: name,
+                    const Gap(8),
+                    CustomText(
+                      text:
+                          'Manage your personal information, payment cards and account preferences.',
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
                     ),
-                    Gap(20),
+                    const Gap(24),
 
-                    /// Email
-                    CustomProfileField(
-                      label: 'Email',
-                      controller: email,
-                    ),
-                    Gap(20),
-
-                    /// Address
-                    CustomProfileField(
-                      label: 'Address',
-                      controller: address,
-                    ),
-                    Gap(20),
-
-                    Divider(color: Colors.white, thickness: 1),
-
-                    Gap(8),
-                    userModel?.visa == null ||
-                            userModel!.visa!.isEmpty
-                        ?
-                          /// Add Visa
-                          CustomProfileField(
-                            label: 'Add Visa Card',
-                            controller: visa,
-                          )
-                        :
-                          /// Visa Card
-                          ListTile(
-                            onTap: () {},
-                            contentPadding:
-                                const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 5,
-                                ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(20),
-                            ),
-                            tileColor: Colors.white,
-                            title: const CustomText(
-                              text: 'Visa',
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                            subtitle: const CustomText(
-                              text: '**** **** **** 1234',
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
-                            leading: Image.asset(
-                              'assets/profile_visa.png',
-                              width: 80,
-                            ),
-                            trailing: CustomText(
-                              text: 'Default',
-                              color: Colors.black,
-                            ),
+                    /// Info
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.card,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.textPrimary
+                                .withValues(alpha: 0.08),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
                           ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment.stretch,
+                        children: [
+                          CustomText(
+                            text: 'Account info',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                          const Gap(18),
+
+                          /// Name
+                          CustomProfileField(
+                            label: 'Name',
+                            controller: name,
+                          ),
+                          const Gap(16),
+
+                          /// Email
+                          CustomProfileField(
+                            label: 'Email',
+                            controller: email,
+                          ),
+                          const Gap(16),
+
+                          /// Address
+                          CustomProfileField(
+                            label: 'Address',
+                            controller: address,
+                          ),
+                          const Gap(16),
+                          Divider(
+                            color: AppColors.textSecondary
+                                .withValues(alpha: 0.28),
+                            thickness: 1,
+                          ),
+                          const Gap(16),
+                          CustomText(
+                            text: 'Payment method',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                          const Gap(16),
+                          userModel?.visa == null ||
+                                  userModel!.visa!.isEmpty
+                              ?
+                                /// Add Visa
+                                CustomProfileField(
+                                  label: 'Add Visa Card',
+                                  controller: visa,
+                                )
+                              :
+                                /// Visa Card
+                                ListTile(
+                                  onTap: () {},
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 5,
+                                      ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(
+                                          20,
+                                        ),
+                                  ),
+                                  tileColor:
+                                      AppColors.background,
+                                  title: const CustomText(
+                                    text: 'Visa',
+                                    fontSize: 20,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                  subtitle: const CustomText(
+                                    text: '**** **** **** 1234',
+                                    fontSize: 16,
+                                    color:
+                                        AppColors.textSecondary,
+                                  ),
+                                  leading: Image.asset(
+                                    'assets/profile_visa.png',
+                                    width: 80,
+                                  ),
+                                  trailing: const CustomText(
+                                    text: 'Default',
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                          Gap(400),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -292,34 +378,51 @@ class _ProfileViewState extends State<ProfileView> {
           ),
 
           bottomSheet: Container(
-            height: 90,
-            color: Colors.white,
+            height: 110,
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.textPrimary.withValues(
+                    alpha: 0.08,
+                  ),
+                  blurRadius: 16,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // Left Button: "Edit Profile"
                 GestureDetector(
                   onTap: updataProfileData,
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 18,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: isLoading
-                        ? CircularProgressIndicator(
-                            color: Colors.white,
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
+                            ),
                           )
                         : Row(
-                            children: [
-                              Text(
-                                "Edit Profile",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
+                            children: const [
+                              CustomText(
+                                text: 'Edit Profile',
+                                color: Colors.white,
                               ),
                               SizedBox(width: 8),
                               Icon(
@@ -330,30 +433,27 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                   ),
                 ),
-                SizedBox(width: 16), // Space between buttons
-                // Right Button: "Log out"
+                const SizedBox(width: 8),
                 GestureDetector(
                   onTap: logout,
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 18,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.background,
                       border: Border.all(
                         color: AppColors.primary,
                         width: 2,
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: Row(
-                      children: [
-                        Text(
-                          "Log out",
-                          style: TextStyle(
-                            color: AppColors.primary,
-                          ),
+                      children: const [
+                        CustomText(
+                          text: 'Log out',
+                          color: AppColors.primary,
                         ),
                         SizedBox(width: 8),
                         Icon(
@@ -367,36 +467,6 @@ class _ProfileViewState extends State<ProfileView> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class CustomProfileField extends StatelessWidget {
-  const CustomProfileField({
-    super.key,
-    this.label,
-    required this.controller,
-  });
-  final String? label;
-  final TextEditingController controller;
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      cursorColor: Colors.white,
-      style: TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: Colors.white),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white, width: 1),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white, width: 1),
         ),
       ),
     );

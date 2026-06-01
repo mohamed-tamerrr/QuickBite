@@ -14,10 +14,12 @@ class CustomTextFormField extends StatefulWidget {
   final TextEditingController controller;
 
   @override
-  State<CustomTextFormField> createState() => _CustomTextFormFieldState();
+  State<CustomTextFormField> createState() =>
+      _CustomTextFormFieldState();
 }
 
-class _CustomTextFormFieldState extends State<CustomTextFormField> {
+class _CustomTextFormFieldState
+    extends State<CustomTextFormField> {
   late bool _isObscure;
 
   @override
@@ -45,20 +47,25 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   _toggleObscure();
                 },
                 icon: Icon(
-                  _isObscure ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.grey,
+                  _isObscure
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                  color: AppColors.textSecondary,
                 ),
               )
             : null,
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: const BorderSide(color: AppColors.card),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: BorderSide(color: AppColors.primaryLight),
         ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.background,
         hintText: widget.hintText,
+        hintStyle: const TextStyle(
+          color: AppColors.textSecondary,
+        ),
       ),
       validator: (v) {
         if (v == null || v.isEmpty) {

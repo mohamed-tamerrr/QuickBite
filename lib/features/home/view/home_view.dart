@@ -106,7 +106,11 @@ class _HomeViewState extends State<HomeView> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const ProductDetailsView(),
+                                        ProductDetailsView(
+                                          productId: product.id,
+                                          productImage:
+                                              product.image,
+                                        ),
                                   ),
                                 );
                               },

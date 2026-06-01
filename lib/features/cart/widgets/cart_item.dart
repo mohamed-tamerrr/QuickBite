@@ -23,7 +23,7 @@ class CartItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white,
+      color: AppColors.card,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 28,
@@ -40,7 +40,10 @@ class CartItem extends StatelessWidget {
                   text: text,
                   fontWeight: FontWeight.w600,
                 ),
-                CustomText(text: desc),
+                CustomText(
+                  text: desc,
+                  color: AppColors.textSecondary,
+                ),
               ],
             ),
 

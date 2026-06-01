@@ -27,6 +27,7 @@ class _SignupViewState extends State<SignupView> {
   AuthRepo authRepo = AuthRepo();
   bool isLoading = false;
 
+  /// Sign Up
   Future<void> signup() async {
     setState(() => isLoading = true);
     if (formKey.currentState!.validate()) {
@@ -56,80 +57,149 @@ class _SignupViewState extends State<SignupView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              Gap(200),
-              SvgPicture.asset(
-                'assets/logo/logo.svg',
-                color: AppColors.primary,
-              ),
-              Gap(10),
-              CustomText(text: 'Welcome to our Food App !!'),
-              Gap(60),
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 24,
+          ),
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 20),
+
+                /// Logo
+                Center(
+                  child: SvgPicture.asset(
+                    'assets/logo/logo.svg',
                     color: AppColors.primary,
+                    width: 92,
+                  ),
+                ),
+                const Gap(18),
+                Center(
+                  child: CustomText(
+                    text: 'Create Account',
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const Gap(8),
+                Center(
+                  child: CustomText(
+                    text:
+                        'Join us and order your favorite meals',
+                    fontSize: 15,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const Gap(28),
+
+                /// Card
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppColors.card,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.textPrimary.withValues(
+                          alpha: 0.08,
+                        ),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
                   ),
                   child: Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.stretch,
                     children: [
-                      Gap(30),
+                      CustomText(
+                        text: 'Start your journey',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                      const Gap(24),
+
+                      /// Name
                       CustomTextFormField(
                         controller: name,
                         hintText: 'Full Name',
                         isPassword: false,
                       ),
-                      Gap(15),
+                      const Gap(18),
+
+                      /// Email
                       CustomTextFormField(
                         controller: email,
                         hintText: 'Email Address',
                         isPassword: false,
                       ),
-                      Gap(15),
+                      const Gap(18),
+
+                      /// Password
                       CustomTextFormField(
                         controller: password,
                         hintText: 'Password',
                         isPassword: true,
                       ),
-                      Gap(15),
+                      const Gap(18),
 
+                      /// Confirm Password
                       CustomTextFormField(
                         controller: confirmPassword,
                         hintText: 'Confirm Password',
                         isPassword: true,
                       ),
-                      Gap(30),
+                      const Gap(24),
                       isLoading
-                          ? CircularProgressIndicator(
-                              color: Colors.white,
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                              ),
                             )
-                          : AuthBtn(
+                          :
+                            /// Sign Up
+                            AuthBtn(
                               textColor: Colors.white,
                               text: 'Sign Up',
                               onTap: signup,
                             ),
-                      Gap(20),
-                      AuthBtn(
-                        color: Colors.white,
-                        textColor: AppColors.primary,
-                        text: 'Go To Login ?',
-                        onTap: () {
+                      const Gap(16),
+
+                      /// Go To Login
+                      TextButton(
+                        onPressed: () {
                           Navigator.pop(context);
                         },
+                        style: TextButton.styleFrom(
+                          backgroundColor: AppColors.primary
+                              .withValues(alpha: .08),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              16,
+                            ),
+                          ),
+                          foregroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                          ),
+                        ),
+                        child: const CustomText(
+                          text: 'Go To Login ?',
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

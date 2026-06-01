@@ -29,7 +29,7 @@ class UserHeader extends StatelessWidget {
               text: 'Hello, Mohamed Tamer',
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Colors.grey.shade500,
+              color: AppColors.textSecondary,
             ),
           ],
         ),

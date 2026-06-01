@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/app_colors.dart';
+
 class SearchField extends StatelessWidget {
   const SearchField({super.key});
 
@@ -7,20 +9,26 @@ class SearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       elevation: 2,
-      shadowColor: Colors.grey,
+      shadowColor: AppColors.textSecondary.withOpacity(0.25),
       borderRadius: BorderRadius.circular(15),
       child: TextField(
         decoration: InputDecoration(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppColors.card,
           hintText: 'Search...',
-          prefixIcon: Icon(Icons.search),
+          hintStyle: const TextStyle(
+            color: AppColors.textSecondary,
+          ),
+          prefixIcon: const Icon(
+            Icons.search,
+            color: AppColors.textSecondary,
+          ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
+            borderSide: const BorderSide(color: AppColors.card),
             borderRadius: BorderRadius.circular(15),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
+            borderSide: const BorderSide(color: AppColors.card),
             borderRadius: BorderRadius.circular(15),
           ),
         ),

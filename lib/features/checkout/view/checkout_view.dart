@@ -12,13 +12,13 @@ class CheckoutView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.card,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: Colors.black,
+            color: AppColors.textPrimary,
           ),
         ),
       ),
@@ -51,12 +51,13 @@ class CheckoutView extends StatelessWidget {
             Row(
               children: [
                 Checkbox(
-                  activeColor: Color(0xffEF2A39),
+                  activeColor: AppColors.primary,
                   value: true,
                   onChanged: (value) {},
                 ),
                 CustomText(
                   text: 'Save card details for future payments',
+                  color: AppColors.textSecondary,
                 ),
               ],
             ),
@@ -66,11 +67,11 @@ class CheckoutView extends StatelessWidget {
 
       bottomSheet: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.card,
           boxShadow: [
             BoxShadow(
               blurRadius: 10,
-              color: Colors.black.withValues(alpha: 0.1),
+              color: AppColors.textPrimary.withOpacity(0.1),
               offset: const Offset(0, -3),
             ),
           ],
@@ -91,7 +92,7 @@ class CheckoutView extends StatelessWidget {
                 const CustomText(
                   text: 'Total',
                   fontSize: 16,
-                  color: Colors.grey,
+                  color: AppColors.textSecondary,
                 ),
                 CustomText(
                   text: '\$45.00',
@@ -120,7 +121,7 @@ class CheckoutView extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                             20,
                           ),
-                          color: Colors.white,
+                          color: AppColors.card,
                         ),
                         child: Center(
                           child: Column(
@@ -149,7 +150,7 @@ class CheckoutView extends StatelessWidget {
                                   text:
                                       'Your payment was successful.\nA receipt for this purchase has\nbeen sent to your email.',
                                   fontSize: 16,
-                                  color: Colors.grey.shade400,
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                               Gap(50),
@@ -199,14 +200,14 @@ class _PaymentMethodViewState extends State<PaymentMethodView> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          tileColor: const Color(0xff3C2F2F),
+          tileColor: AppColors.primaryDark,
           title: const Text(
             'Cash on Delivery',
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           leading: Image.asset('assets/cash.png'),
           trailing: Radio<int>(
-            activeColor: Colors.white,
+            activeColor: AppColors.card,
             value: 1,
             groupValue: selectedValue,
             onChanged: (value) {
@@ -228,7 +229,7 @@ class _PaymentMethodViewState extends State<PaymentMethodView> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          tileColor: Colors.blue.shade900,
+          tileColor: AppColors.primary,
           title: const CustomText(
             text: 'Visa',
             fontSize: 20,

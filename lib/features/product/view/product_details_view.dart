@@ -1,18 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/features/cart/data/cart_model.dart';
+import 'package:hungry/features/cart/data/cart_repo.dart';
 import 'package:hungry/features/home/data/model/topping_model.dart';
 import 'package:hungry/features/home/data/repo/product_repo.dart';
-
-import '../data/models/topping_model.dart';
+import 'package:hungry/shared/custom_snack.dart';
 import '../widgets/spicy_slider.dart';
 import '../widgets/topping_card.dart';
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
 
 class ProductDetailsView extends StatefulWidget {
-  const ProductDetailsView({super.key});
-
+  const ProductDetailsView({
+    super.key,
+    required this.productId,
+    required this.productImage,
+  });
+  final int productId;
+  final String productImage;
   @override
   State<ProductDetailsView> createState() =>
       _ProductDetailsViewState();
@@ -24,6 +30,9 @@ class _ProductDetailsViewState
   final ProductRepo _productRepo = ProductRepo();
   List<ToppingModel>? options;
   List<ToppingModel>? toppings;
+
+  Set<int> selectedToppings = {};
+  Set<int> selectedOptions = {};
 
   /// Get Toppings
   Future<void> _getToppings() async {
@@ -42,6 +51,8 @@ class _ProductDetailsViewState
       options = res;
     });
   }
+
+  final CartRepo _cartRepo = CartRepo();
 
   @override
   void initState() {
@@ -92,15 +103,32 @@ class _ProductDetailsViewState
                   itemCount: toppings?.length,
                   itemBuilder: (context, index) {
                     final topping = toppings?[index];
+                    final id = topping?.id;
+                    final isSelected = selectedToppings.contains(
+                      id,
+                    );
                     return topping == null
                         ? CupertinoActivityIndicator()
-                        : ToppingCard(
+                        : ExtraCard(
+                            onTap: () {
+                              setState(() {
+                                if (selectedToppings.contains(
+                                  id,
+                                )) {
+                                  selectedToppings.remove(id);
+                                } else {
+                                  selectedToppings.add(id!);
+                                }
+                              });
+                            },
                             image: topping.image,
                             name: topping.name,
+                            isSelected: isSelected,
                           );
                   },
                 ),
               ),
+
               const Gap(50),
               const CustomText(
                 text: 'Side options',
@@ -110,17 +138,33 @@ class _ProductDetailsViewState
               SizedBox(
                 height: 150,
 
-                /// Options
+                // Options
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: options?.length,
                   itemBuilder: (context, index) {
                     final option = options?[index];
+                    final id = option?.id;
+                    final isSelected = selectedOptions.contains(
+                      id,
+                    );
                     return option == null
                         ? CupertinoActivityIndicator()
-                        : ToppingCard(
+                        : ExtraCard(
+                            onTap: () {
+                              setState(() {
+                                if (selectedOptions.contains(
+                                  id,
+                                )) {
+                                  selectedOptions.remove(id);
+                                } else {
+                                  selectedOptions.add(id!);
+                                }
+                              });
+                            },
                             image: option.image,
                             name: option.name,
+                            isSelected: isSelected,
                           );
                   },
                 ),
@@ -139,7 +183,30 @@ class _ProductDetailsViewState
                   ),
                   CustomButton(
                     text: 'Add To Cart',
-                    onTap: () {},
+                    onTap: () async {
+                      try {
+                        final cart = CartModel(
+                          productId: widget.productId,
+                          qty: 1,
+                          spicy: value,
+                          toppings: [],
+                          options: [],
+                        );
+                        await _cartRepo.addToCart(
+                          CartRequestModel(items: [cart]),
+                        );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(
+                          customSnack(
+                            msg: 'Success',
+                            color: Colors.green,
+                          ),
+                        );
+                      } on Exception catch (e) {
+                        throw e.toString();
+                      }
+                    },
                   ),
                 ],
               ),
