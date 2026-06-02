@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/features/home/data/model/product_model.dart';
 import 'package:hungry/features/home/data/repo/product_repo.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../widgets/card_item.dart';
 import '../widgets/food_category.dart';
@@ -93,46 +94,108 @@ class _HomeViewState extends State<HomeView> {
 
               /// Food Items
               SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
+                padding: EdgeInsets.only(
+                  left: 10,
+                  right: 10,
+                  bottom: 120,
+                  top: 20,
+                ),
                 sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: products?.length ?? 6,
-                    (context, index) {
-                      ProductModel? product = products?[index];
-                      return product == null
-                          ? CupertinoActivityIndicator()
-                          : GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ProductDetailsView(
-                                          productId: product.id,
-                                          productImage:
-                                              product.image,
-                                        ),
-                                  ),
-                                );
-                              },
-                              child: CardItem(
-                                // rate: '4.9',
-                                // desc: 'Wend\'s Burger',
-                                // text: 'Cheeseburger',
-                                // image: 'assets/burger.png',
-                                rate: product.rate,
-                                desc: product.desc,
-                                text: product.name,
-                                image: product.image,
-                              ),
-                            );
-                    },
-                  ),
                   gridDelegate:
                       SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
+                        childAspectRatio: 0.7,
                         mainAxisSpacing: 2,
-                        childAspectRatio: .71,
+                        crossAxisSpacing: 2,
                       ),
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: products?.length ?? 6,
+                    (context, index) {
+                      final reversedIndex =
+                          (products?.length ?? 0) - 1 - index;
+                      final product = products?[reversedIndex];
+
+                      /// SHIMMER
+                      if (product == null) {
+                        return Shimmer(
+                          enabled: true,
+                          direction: ShimmerDirection.rtl,
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.black,
+                              Colors.black38,
+                              Colors.black87,
+                            ],
+                          ),
+                          child: Container(
+                            width: 250,
+                            height: 140,
+                            padding: EdgeInsets.all(30),
+                            decoration: BoxDecoration(
+                              color: Colors.black12,
+                              borderRadius:
+                                  BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: 250,
+                                  height: 100,
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black12,
+                                    borderRadius:
+                                        BorderRadius.circular(
+                                          12,
+                                        ),
+                                  ),
+                                ),
+                                Gap(25),
+                                Column(
+                                  spacing: 10,
+                                  children: List.generate(4, (
+                                    index,
+                                  ) {
+                                    return Container(
+                                      width: 250,
+                                      height: 10,
+                                      padding: EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black12,
+                                        borderRadius:
+                                            BorderRadius.circular(
+                                              12,
+                                            ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      return GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (c) => ProductDetailsView(
+                              productImage: product.image,
+                              productId: product.id,
+                              productPrice: product.price,
+                            ),
+                          ),
+                        ),
+                        child: CardItem(
+                          text: product.name,
+                          image: product.image,
+                          desc: product.desc,
+                          rate: product.rate,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

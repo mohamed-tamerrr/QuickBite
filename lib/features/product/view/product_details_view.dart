@@ -16,9 +16,11 @@ class ProductDetailsView extends StatefulWidget {
     super.key,
     required this.productId,
     required this.productImage,
+    required this.productPrice,
   });
   final int productId;
   final String productImage;
+  final String productPrice;
   @override
   State<ProductDetailsView> createState() =>
       _ProductDetailsViewState();
