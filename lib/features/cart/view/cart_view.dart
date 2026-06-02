@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/features/cart/data/cart_model.dart';
 import 'package:hungry/features/cart/data/cart_repo.dart';
-
+import 'package:hungry/shared/custom_snack.dart';
 import '../widgets/cart_item.dart';
 import '../../checkout/view/checkout_view.dart';
 import '../../../shared/custom_button.dart';
@@ -21,6 +21,7 @@ class _CartViewState extends State<CartView> {
   final CartRepo _cartRepo = CartRepo();
   GetCartResponse? cartResponse;
 
+  /// Get Cart Items
   Future<void> getCartItems() async {
     final response = await _cartRepo.getCartItems();
     final itemCount = response.cartData.items.length;
@@ -28,6 +29,27 @@ class _CartViewState extends State<CartView> {
       cartResponse = response;
       quantities = List.generate(itemCount, (_) => 1);
     });
+  }
+
+  /// Delete Cart Item
+  Future<void> removeCartItem(int id) async {
+    try {
+      if (!mounted) return;
+
+      await _cartRepo.removeCartItem(id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnack(
+          msg: 'Item removed from cart',
+          color: Colors.green,
+        ),
+      );
+      if (!mounted) return;
+      getCartItems();
+    } catch (e) {
+      if (!mounted) return;
+
+      print(e.toString());
+    }
   }
 
   @override
@@ -83,7 +105,8 @@ class _CartViewState extends State<CartView> {
                       });
                     },
                     onRemove: () {
-                      setState(() {});
+                      removeCartItem(item?.itemId ?? 0);
+                      setState() {}
                     },
                     quantity: quantities[index],
                   );

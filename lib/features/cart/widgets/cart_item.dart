@@ -105,17 +105,20 @@ class CartItem extends StatelessWidget {
                 ),
                 Gap(30),
 
-                Container(
-                  height: 50,
-                  width: 130,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Center(
-                    child: CustomText(
-                      text: 'Remove',
-                      color: Colors.white,
+                GestureDetector(
+                  onTap: onRemove,
+                  child: Container(
+                    height: 50,
+                    width: 130,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Center(
+                      child: CustomText(
+                        text: 'Remove',
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
