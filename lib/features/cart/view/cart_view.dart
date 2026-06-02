@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/features/cart/data/cart_model.dart';
+import 'package:hungry/features/cart/data/cart_repo.dart';
 
 import '../widgets/cart_item.dart';
 import '../../checkout/view/checkout_view.dart';
@@ -14,12 +16,23 @@ class CartView extends StatefulWidget {
 }
 
 class _CartViewState extends State<CartView> {
-  final int itemCount = 20;
-  late List<int> quantities;
+  late List<int> quantities = [];
+
+  final CartRepo _cartRepo = CartRepo();
+  GetCartResponse? cartResponse;
+
+  Future<void> getCartItems() async {
+    final response = await _cartRepo.getCartItems();
+    final itemCount = response.cartData.items.length;
+    setState(() {
+      cartResponse = response;
+      quantities = List.generate(itemCount, (_) => 1);
+    });
+  }
 
   @override
   void initState() {
-    quantities = List.generate(itemCount, (index) => 1);
+    getCartItems();
     super.initState();
   }
 
@@ -47,13 +60,16 @@ class _CartViewState extends State<CartView> {
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.only(top: 10),
-                itemCount: itemCount,
+                itemCount:
+                    cartResponse?.cartData.items.length ?? 0,
                 separatorBuilder: (_, __) => const Gap(15),
                 itemBuilder: (context, index) {
+                  final item =
+                      cartResponse?.cartData.items[index];
                   return CartItem(
-                    text: 'Pizza Margherita',
-                    desc: 'Veggie Burger',
-                    image: 'assets/cart.png',
+                    text: item?.productName ?? '',
+                    desc: 'Spicy : ${item?.spicyLevel ?? ''}',
+                    image: item?.productImage ?? '',
                     onAdd: () {
                       setState(() {
                         quantities[index]++;
@@ -135,4 +151,4 @@ class _CartViewState extends State<CartView> {
       ),
     );
   }
-} // todo : dialog
+}
