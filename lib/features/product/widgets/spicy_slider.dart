@@ -13,33 +13,25 @@ class SpicySlider extends StatelessWidget {
   final void Function(double)? onChanged;
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Image.asset('assets/detail.png', width: 200),
-        Spacer(),
-        Column(
+        CustomText(
+          text:
+              'Customize Your Burger\nto Your Tastes.Ultimate\nExperience',
+        ),
+        Slider(
+          activeColor: AppColors.primary,
+          inactiveColor: AppColors.primary.withValues(alpha: .5),
+          min: 0,
+          max: 1,
+          value: value,
+          onChanged: onChanged,
+        ),
+        Row(
           children: [
-            CustomText(
-              text:
-                  'Customize Your Burger\nto Your Tastes.Ultimate\nExperience',
-            ),
-            Slider(
-              activeColor: AppColors.primary,
-              inactiveColor: AppColors.primary.withValues(
-                alpha: .5,
-              ),
-              min: 0,
-              max: 1,
-              value: value,
-              onChanged: onChanged,
-            ),
-            Row(
-              children: [
-                CustomText(text: '🥶'),
-                Gap(100),
-                CustomText(text: '🌶️'),
-              ],
-            ),
+            CustomText(text: '🥶'),
+            Gap(100),
+            CustomText(text: '🌶️'),
           ],
         ),
       ],

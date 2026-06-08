@@ -85,13 +85,24 @@ class _ProductDetailsViewState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SpicySlider(
-                value: value,
-                onChanged: (v) {
-                  setState(() {
-                    value = v;
-                  });
-                },
+              Row(
+                children: [
+                  Container(
+                    color: Colors.transparent,
+                    child: Image.network(
+                      widget.productImage,
+                      width: 200,
+                    ),
+                  ),
+                  SpicySlider(
+                    value: value,
+                    onChanged: (v) {
+                      setState(() {
+                        value = v;
+                      });
+                    },
+                  ),
+                ],
               ),
               const Gap(50),
               const CustomText(text: 'Toppings', fontSize: 20),
@@ -180,7 +191,10 @@ class _ProductDetailsViewState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomText(text: 'Total', fontSize: 20),
-                      CustomText(text: '\$18.19', fontSize: 30),
+                      CustomText(
+                        text: widget.productPrice,
+                        fontSize: 30,
+                      ),
                     ],
                   ),
                   CustomButton(
