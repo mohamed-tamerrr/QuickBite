@@ -18,4 +18,8 @@ class AppColors {
 
   // Accent
   static const Color accent = Color(0xff22C55E);
+  static const List<Color> gradientsPrimary = [
+    AppColors.primary,
+    AppColors.primaryDark,
+  ];
 }

@@ -33,7 +33,7 @@ class ExtraCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isSelected
-                ? [AppColors.primary, AppColors.primaryDark]
+                ? AppColors.gradientsPrimary
                 : [
                     Colors.grey.withValues(alpha: .65),
                     Colors.grey.withValues(alpha: .35),

@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/features/cart/data/cart_model.dart';
 import 'package:hungry/features/cart/data/cart_repo.dart';
 import 'package:hungry/features/home/data/model/topping_model.dart';
 import 'package:hungry/features/home/data/repo/product_repo.dart';
+import 'package:hungry/features/product/widgets/custom_button_product_details.dart';
 import 'package:hungry/shared/custom_snack.dart';
 import '../widgets/spicy_slider.dart';
 import '../widgets/topping_card.dart';
@@ -35,6 +37,8 @@ class _ProductDetailsViewState
 
   Set<int> selectedToppings = {};
   Set<int> selectedOptions = {};
+
+  bool isLoading = false;
 
   /// Get Toppings
   Future<void> _getToppings() async {
@@ -68,7 +72,7 @@ class _ProductDetailsViewState
     return Scaffold(
       /// AppBar
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -182,53 +186,99 @@ class _ProductDetailsViewState
                   },
                 ),
               ),
-              Gap(50),
-              Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(text: 'Total', fontSize: 20),
-                      CustomText(
-                        text: widget.productPrice,
-                        fontSize: 30,
-                      ),
-                    ],
-                  ),
-                  CustomButton(
-                    text: 'Add To Cart',
-                    onTap: () async {
-                      try {
-                        final cart = CartModel(
-                          productId: widget.productId,
-                          qty: 1,
-                          spicy: value,
-                          toppings: [],
-                          options: [],
-                        );
-                        await _cartRepo.addToCart(
-                          CartRequestModel(items: [cart]),
-                        );
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(
-                          customSnack(
-                            msg: 'Success',
-                            color: Colors.green,
-                          ),
-                        );
-                      } on Exception catch (e) {
-                        throw e.toString();
-                      }
-                    },
-                  ),
-                ],
-              ),
-              Gap(60),
+              Gap(500),
             ],
           ),
+        ),
+      ),
+
+      bottomSheet: Container(
+        height: 110,
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          gradient: LinearGradient(
+            colors: AppColors.gradientsPrimary,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textPrimary.withValues(
+                alpha: 0.08,
+              ),
+              blurRadius: 16,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  text: 'Total',
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+                CustomText(
+                  text: widget.productPrice,
+                  fontSize: 30,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+            CustomProductDetailsButton(
+              color: Colors.white,
+              isLoading: isLoading,
+              text: 'Add To Cart',
+              textColor: Colors.black,
+              iconColor: Colors.black,
+
+              onTap: () async {
+                setState(() {
+                  isLoading = true;
+                });
+                try {
+                  final cart = CartModel(
+                    productId: widget.productId,
+                    qty: 1,
+                    spicy: value,
+                    toppings: [],
+                    options: [],
+                  );
+                  await _cartRepo.addToCart(
+                    CartRequestModel(items: [cart]),
+                  );
+                  setState(() {
+                    isLoading = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customSnack(
+                      msg: 'Success',
+                      color: Colors.green,
+                    ),
+                  );
+                } on Exception catch (e) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customSnack(
+                      msg: 'Failed',
+                      color: Colors.red,
+                    ),
+                  );
+                  throw e.toString();
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
