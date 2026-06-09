@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../shared/custom_text.dart';
 
-class CartItem extends StatelessWidget {
+class CartItem extends StatefulWidget {
   const CartItem({
     super.key,
     required this.text,
@@ -13,13 +13,20 @@ class CartItem extends StatelessWidget {
     this.onRemove,
     this.onMinus,
     required this.quantity,
+    required this.isLoading,
   });
   final String text, desc, image;
   final Function()? onAdd;
   final Function()? onMinus;
   final Function()? onRemove;
   final int quantity;
+  final bool isLoading;
 
+  @override
+  State<CartItem> createState() => _CartItemState();
+}
+
+class _CartItemState extends State<CartItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -36,18 +43,18 @@ class CartItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.network(
-                  image,
+                  widget.image,
                   fit: BoxFit.cover,
                   height: 80,
                   width: 80,
                 ),
                 CustomText(
                   fontSize: 11,
-                  text: text,
+                  text: widget.text,
                   fontWeight: FontWeight.w600,
                 ),
                 CustomText(
-                  text: desc,
+                  text: widget.desc,
                   color: AppColors.textSecondary,
                 ),
               ],
@@ -58,7 +65,7 @@ class CartItem extends StatelessWidget {
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: onMinus,
+                      onTap: widget.onMinus,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -78,12 +85,12 @@ class CartItem extends StatelessWidget {
                     ),
                     const Gap(30),
                     CustomText(
-                      text: quantity.toString(),
+                      text: widget.quantity.toString(),
                       fontSize: 20,
                     ),
                     const Gap(30),
                     GestureDetector(
-                      onTap: onAdd,
+                      onTap: widget.onAdd,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -106,7 +113,7 @@ class CartItem extends StatelessWidget {
                 Gap(30),
 
                 GestureDetector(
-                  onTap: onRemove,
+                  onTap: widget.onRemove,
                   child: Container(
                     height: 50,
                     width: 130,
@@ -115,10 +122,14 @@ class CartItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: Center(
-                      child: CustomText(
-                        text: 'Remove',
-                        color: Colors.white,
-                      ),
+                      child: widget.isLoading
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : CustomText(
+                              text: 'Remove',
+                              color: Colors.white,
+                            ),
                     ),
                   ),
                 ),

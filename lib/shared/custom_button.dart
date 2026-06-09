@@ -8,11 +8,13 @@ class CustomButton extends StatelessWidget {
     required this.text,
     this.onTap,
     this.color,
+    this.textColor,
     this.width,
   });
   final String text;
   final void Function()? onTap;
   final Color? color;
+  final Color? textColor;
   final double? width;
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class CustomButton extends StatelessWidget {
           child: CustomText(
             text: text,
             fontSize: 20,
-            color: Colors.white,
+            color: textColor,
           ),
         ),
       ),

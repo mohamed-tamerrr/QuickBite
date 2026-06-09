@@ -1,16 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/constants/app_colors.dart';
+
 import 'package:hungry/features/cart/data/cart_model.dart';
 import 'package:hungry/features/cart/data/cart_repo.dart';
 import 'package:hungry/features/home/data/model/topping_model.dart';
 import 'package:hungry/features/home/data/repo/product_repo.dart';
 import 'package:hungry/features/product/widgets/custom_button_product_details.dart';
+
+import 'package:hungry/shared/custom_bottom_sheet.dart';
 import 'package:hungry/shared/custom_snack.dart';
 import '../widgets/spicy_slider.dart';
 import '../widgets/topping_card.dart';
-import '../../../shared/custom_button.dart';
+
 import '../../../shared/custom_text.dart';
 
 class ProductDetailsView extends StatefulWidget {
@@ -192,30 +194,10 @@ class _ProductDetailsViewState
         ),
       ),
 
-      bottomSheet: Container(
-        height: 110,
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          gradient: LinearGradient(
-            colors: AppColors.gradientsPrimary,
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.textPrimary.withValues(
-                alpha: 0.08,
-              ),
-              blurRadius: 16,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
-        child: Row(
+      bottomSheet: CustomBottomSheet(
+        isLoading: isLoading,
+        onTap: onAddToCart,
+        body: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
@@ -239,48 +221,41 @@ class _ProductDetailsViewState
               text: 'Add To Cart',
               textColor: Colors.black,
               iconColor: Colors.black,
-
-              onTap: () async {
-                setState(() {
-                  isLoading = true;
-                });
-                try {
-                  final cart = CartModel(
-                    productId: widget.productId,
-                    qty: 1,
-                    spicy: value,
-                    toppings: [],
-                    options: [],
-                  );
-                  await _cartRepo.addToCart(
-                    CartRequestModel(items: [cart]),
-                  );
-                  setState(() {
-                    isLoading = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    customSnack(
-                      msg: 'Success',
-                      color: Colors.green,
-                    ),
-                  );
-                } on Exception catch (e) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    customSnack(
-                      msg: 'Failed',
-                      color: Colors.red,
-                    ),
-                  );
-                  throw e.toString();
-                }
-              },
+              onTap: onAddToCart,
             ),
           ],
         ),
       ),
     );
+  }
+
+  void onAddToCart() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final cart = CartModel(
+        productId: widget.productId,
+        qty: 1,
+        spicy: value,
+        toppings: [],
+        options: [],
+      );
+      await _cartRepo.addToCart(CartRequestModel(items: [cart]));
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnack(msg: 'Success', color: Colors.green),
+      );
+    } on Exception catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnack(msg: 'Failed', color: Colors.red),
+      );
+      throw e.toString();
+    }
   }
 }
