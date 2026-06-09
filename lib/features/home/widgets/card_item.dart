@@ -20,10 +20,32 @@ class CardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 500),
-        child: Card(
-          color: Colors.white,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.white.withValues(alpha: .5),
+            width: 1.2,
+          ),
+
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .15),
+              blurRadius: 20,
+              offset: Offset(0, 80),
+            ),
+          ],
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withValues(alpha: .15),
+              Colors.white.withValues(alpha: .03),
+            ],
+          ),
+        ),
+
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
           child: Padding(
             padding: const EdgeInsets.all(5),
             child: Column(
@@ -39,21 +61,6 @@ class CardItem extends StatelessWidget {
                     height: 120,
                   ),
                 ),
-                // Stack(
-                //   clipBehavior: Clip.none,
-                //   children: [
-                //     Positioned(
-                //       bottom: 0,
-                //       right: 0,
-                //       left: 0,
-                //       child: Image.asset(
-                //         'assets/icon/shadow.png',
-                //         color: Colors.black26,
-                //       ),
-                //     ),
-                //
-                //   ],
-                // ),
 
                 /// Details
                 Padding(

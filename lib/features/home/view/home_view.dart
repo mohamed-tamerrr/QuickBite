@@ -50,6 +50,7 @@ class _HomeViewState extends State<HomeView> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
+          backgroundColor: Colors.transparent,
           body: CustomScrollView(
             slivers: [
               /// Header
@@ -105,15 +106,15 @@ class _HomeViewState extends State<HomeView> {
                       SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.7,
-                        mainAxisSpacing: 2,
-                        crossAxisSpacing: 2,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
                       ),
                   delegate: SliverChildBuilderDelegate(
                     childCount: products?.length ?? 6,
                     (context, index) {
                       final reversedIndex =
                           (products?.length ?? 0) - 1 - index;
-                      final product = products?[reversedIndex];
+                      final product = products?[index];
 
                       /// SHIMMER
                       if (product == null) {
