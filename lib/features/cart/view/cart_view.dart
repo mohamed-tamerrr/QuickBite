@@ -24,6 +24,7 @@ class _CartViewState extends State<CartView> {
   GetCartResponse? cartResponse;
   bool isLoading = false;
   bool isLoadingItem = false;
+  int? deletingItemId;
 
   /// Get Cart Items
   Future<void> getCartItems() async {
@@ -44,12 +45,10 @@ class _CartViewState extends State<CartView> {
     try {
       if (!mounted) return;
       setState(() {
-        isLoadingItem = true;
+        deletingItemId = id;
       });
       await _cartRepo.removeCartItem(id);
-      setState(() {
-        isLoadingItem = false;
-      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         customSnack(
           msg: 'Item removed from cart',
@@ -60,11 +59,13 @@ class _CartViewState extends State<CartView> {
       getCartItems();
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        isLoadingItem = false;
-      });
-
       print(e.toString());
+    } finally {
+      if (mounted) {
+        setState(() {
+          deletingItemId = null;
+        });
+      }
     }
   }
 
@@ -115,7 +116,8 @@ class _CartViewState extends State<CartView> {
                         final item =
                             cartResponse?.cartData.items[index];
                         return CartItem(
-                          isLoading: isLoadingItem,
+                          isLoading:
+                              deletingItemId == item?.itemId,
                           text: item?.productName ?? '',
                           desc:
                               'Spicy : ${item?.spicyLevel ?? ''}',
