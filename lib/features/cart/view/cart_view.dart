@@ -184,8 +184,10 @@ class _CartViewState extends State<CartView> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const CheckoutView(),
+                          builder: (context) => CheckoutView(
+                            cartItems:
+                                cartResponse!.cartData.items,
+                          ),
                         ),
                       );
                     },

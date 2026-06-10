@@ -1,18 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/network/api_exceptions.dart';
+import 'package:hungry/features/cart/data/cart_model.dart';
+import 'package:hungry/features/checkout/data/order_model.dart';
+import 'package:hungry/features/checkout/data/order_repo.dart';
+import 'package:hungry/shared/custom_dialog.dart';
 import '../../../core/constants/app_colors.dart';
 import '../widgets/order_details_widget.dart';
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
 
-class CheckoutView extends StatelessWidget {
-  const CheckoutView({super.key});
+class CheckoutView extends StatefulWidget {
+  const CheckoutView({super.key, required this.cartItems});
+  final List<CartItemModel> cartItems;
+  @override
+  State<CheckoutView> createState() => _CheckoutViewState();
+}
+
+class _CheckoutViewState extends State<CheckoutView> {
+  final OrderRepo _orderRepo = OrderRepo();
+
+  Future<void> _saveOrder() async {
+    try {
+      final orderItems = widget.cartItems.map((item) {
+        return OrderItemRequest(
+          productId: item.productId,
+          quantity: item.quantity,
+          spicy: double.tryParse(item.spicyLevel) ?? 0.0,
+          toppings: [],
+          sideOptions: [],
+        );
+      }).toList();
+
+      final request = OrderRequest(items: orderItems);
+
+      await _orderRepo.saveOrder(request);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Order placed successfully'),
+        ),
+      );
+    } catch (e) {
+      Failure(errorMassage: e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.card,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -105,68 +145,18 @@ class CheckoutView extends StatelessWidget {
             /// Checkout Button
             CustomButton(
               text: 'Pay Now',
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      backgroundColor: Colors.transparent,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 220,
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            20,
-                          ),
-                          color: AppColors.card,
-                        ),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Gap(20),
-                              CircleAvatar(
-                                backgroundColor:
-                                    AppColors.primary,
-                                radius: 40,
-                                child: const Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                  size: 40,
-                                ),
-                              ),
-                              Gap(20),
-                              CustomText(
-                                text: 'Success !',
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22,
-                              ),
-                              Gap(6),
-                              Center(
-                                child: CustomText(
-                                  text:
-                                      'Your payment was successful.\nA receipt for this purchase has\nbeen sent to your email.',
-                                  fontSize: 16,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                              Gap(50),
-                              CustomButton(
-                                text: 'Go Back',
-                                width: 150,
-                                onTap: () =>
-                                    Navigator.pop(context),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
+              onTap: () async {
+                try {
+                  await _saveOrder();
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return CustomDialog();
+                    },
+                  );
+                } catch (e) {
+                  throw Failure(errorMassage: e.toString());
+                }
               },
             ),
           ],

@@ -62,6 +62,36 @@ class _ProductDetailsViewState
 
   final CartRepo _cartRepo = CartRepo();
 
+  void onAddToCart() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final cart = CartModel(
+        productId: widget.productId,
+        qty: 1,
+        spicy: value,
+        toppings: [],
+        options: [],
+      );
+      await _cartRepo.addToCart(CartRequestModel(items: [cart]));
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnack(msg: 'Success', color: Colors.green),
+      );
+    } on Exception catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnack(msg: 'Failed', color: Colors.red),
+      );
+      throw e.toString();
+    }
+  }
+
   @override
   void initState() {
     _getToppings();
@@ -227,35 +257,5 @@ class _ProductDetailsViewState
         ),
       ),
     );
-  }
-
-  void onAddToCart() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      final cart = CartModel(
-        productId: widget.productId,
-        qty: 1,
-        spicy: value,
-        toppings: [],
-        options: [],
-      );
-      await _cartRepo.addToCart(CartRequestModel(items: [cart]));
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        customSnack(msg: 'Success', color: Colors.green),
-      );
-    } on Exception catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        customSnack(msg: 'Failed', color: Colors.red),
-      );
-      throw e.toString();
-    }
   }
 }

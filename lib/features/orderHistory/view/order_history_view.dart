@@ -1,11 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/features/checkout/data/order_model.dart';
+import 'package:hungry/features/checkout/data/order_repo.dart';
 
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
 
-class OrderHistoryView extends StatelessWidget {
+class OrderHistoryView extends StatefulWidget {
   const OrderHistoryView({super.key});
+
+  @override
+  State<OrderHistoryView> createState() =>
+      _OrderHistoryViewState();
+}
+
+class _OrderHistoryViewState extends State<OrderHistoryView> {
+  final OrderRepo _orderRepo = OrderRepo();
+  OrdersResponse? _orders;
+  Future<void> _getOrders() async {
+    try {
+      _orders = await _orderRepo.getOrders();
+      setState(() {});
+    } catch (e) {
+      throw Exception('Failed to load orders: $e');
+    }
+  }
+
+  @override
+  initState() {
+    _getOrders();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +56,10 @@ class OrderHistoryView extends StatelessWidget {
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.only(top: 10),
-                itemCount: 8,
+                itemCount: _orders?.data?.length ?? 0,
                 separatorBuilder: (_, __) => const Gap(15),
                 itemBuilder: (context, index) {
+                  final order = _orders!.data![index];
                   return Card(
                     color: Colors.white,
                     child: Padding(
@@ -47,19 +73,23 @@ class OrderHistoryView extends StatelessWidget {
                             mainAxisAlignment:
                                 MainAxisAlignment.spaceBetween,
                             children: [
-                              Image.asset('assets/cart.png'),
+                              Image.network(
+                                order.productImage ?? '',
+                                width: 80,
+                                height: 80,
+                              ),
                               Column(
                                 crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 children: [
                                   CustomText(
-                                    text: 'Pizza Margherita',
+                                    text: 'Order #${order.id}',
                                   ),
                                   CustomText(
                                     text: 'Quantity: 2',
                                   ),
                                   CustomText(
-                                    text: 'Total: \$12.99',
+                                    text: order.totalPrice ?? '',
                                   ),
                                 ],
                               ),

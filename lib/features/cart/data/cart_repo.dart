@@ -34,7 +34,7 @@ class CartRepo {
     }
   }
 
-  /// Get To Cart
+  /// Get Cart
   Future<GetCartResponse> getCartItems() async {
     try {
       final res = await _apiService.get(_getCartEndPoint);
@@ -62,7 +62,7 @@ class CartRepo {
   Future<void> removeCartItem(int id) async {
     try {
       final res = await _apiService.delete(
-        '/cart/remove/$id',
+        '$_deleteCartEndPoint$id',
         {},
       );
 

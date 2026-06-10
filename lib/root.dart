@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'core/constants/app_colors.dart';
-
 import 'features/auth/view/profile_view.dart';
-
 import 'features/cart/view/cart_view.dart';
 import 'features/home/view/home_view.dart';
 import 'features/orderHistory/view/order_history_view.dart';
