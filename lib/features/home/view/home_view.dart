@@ -1,8 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/network/api_exceptions.dart';
+import 'package:hungry/features/auth/data/auth_repo.dart';
+import 'package:hungry/features/auth/data/user_model.dart';
 import 'package:hungry/features/home/data/model/product_model.dart';
 import 'package:hungry/features/home/data/repo/product_repo.dart';
+import 'package:hungry/shared/custom_snack.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../widgets/card_item.dart';
@@ -24,6 +27,10 @@ class _HomeViewState extends State<HomeView> {
 
   final ProductRepo _productRepo = ProductRepo();
   List<ProductModel>? products;
+  List<ProductModel>? allProducts;
+
+  UserModel? userModel;
+  final AuthRepo _authRepo = AuthRepo();
 
   /// Get Products
   Future<void> getProducts() async {
@@ -31,16 +38,44 @@ class _HomeViewState extends State<HomeView> {
       final res = await _productRepo.getProduct();
       setState(() {
         products = res;
+        allProducts = res;
       });
     } catch (e) {
       print(e.toString());
     }
   }
 
+  /// GetProfile
+  Future<void> getProfileData() async {
+    try {
+      final user = await _authRepo.getProfileData();
+      setState(() {
+        userModel = user;
+      });
+    } catch (e) {
+      String error = 'Error in profile';
+      if (e is Failure) {
+        error = e.errorMassage;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(customSnack(msg: error));
+    }
+  }
+
+  final TextEditingController _searchController =
+      TextEditingController();
   @override
   void initState() {
+    getProfileData();
     getProducts();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,9 +104,28 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   child: Column(
                     children: [
-                      UserHeader(),
+                      UserHeader(
+                        image:
+                            userModel?.image.toString() ??
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvts5aHBstDkR8PigS4RmZkbZy78zpZoSuOw&s",
+                        name: userModel?.name ?? 'ttttamer',
+                      ),
                       Gap(20),
-                      SearchField(),
+                      SearchField(
+                        controller: _searchController,
+                        onChanged: (v) {
+                          final query = v.toLowerCase();
+                          setState(() {
+                            products = allProducts
+                                ?.where(
+                                  (element) => element.name
+                                      .toLowerCase()
+                                      .contains(query),
+                                )
+                                .toList();
+                          });
+                        },
+                      ),
                     ],
                   ),
                 ),

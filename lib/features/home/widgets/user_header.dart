@@ -5,8 +5,13 @@ import '../../../core/constants/app_colors.dart';
 import '../../../shared/custom_text.dart';
 
 class UserHeader extends StatelessWidget {
-  const UserHeader({super.key});
-
+  const UserHeader({
+    super.key,
+    required this.name,
+    required this.image,
+  });
+  final String name;
+  final String image;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -26,7 +31,7 @@ class UserHeader extends StatelessWidget {
             ),
             Gap(5),
             CustomText(
-              text: 'Hello, Mohamed Tamer',
+              text: 'Hello, $name',
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: AppColors.textSecondary,
@@ -39,10 +44,14 @@ class UserHeader extends StatelessWidget {
           backgroundColor: AppColors.primary.withValues(
             alpha: 0.2,
           ),
-          child: CircleAvatar(
-            radius: 28,
-            backgroundColor: AppColors.primary,
-            child: Icon(Icons.person, color: Colors.white),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(200),
+            child: Image.network(
+              image,
+              fit: BoxFit.cover,
+              errorBuilder: (context, err, builder) =>
+                  Icon(Icons.person, color: Colors.white),
+            ),
           ),
         ),
       ],
