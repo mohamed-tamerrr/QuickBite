@@ -31,9 +31,8 @@ class _RootState extends State<Root> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        controller: controller,
-        physics: NeverScrollableScrollPhysics(),
+      body: IndexedStack(
+        index: currentScreen,
         children: screens,
       ),
 
@@ -47,8 +46,6 @@ class _RootState extends State<Root> {
         onTap: (index) {
           setState(() {
             currentScreen = index;
-
-            controller.jumpToPage(currentScreen);
           });
         },
         items: [

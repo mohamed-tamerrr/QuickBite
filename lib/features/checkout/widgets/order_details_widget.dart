@@ -37,14 +37,14 @@ class OrderDetailsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        checkWidget('Order', '\$15.46', false, false),
+        checkWidget('Order', order, false, false),
         Gap(10),
-        checkWidget('Taxes', '\$0.3', false, false),
+        checkWidget('Taxes', taxes, false, false),
         Gap(10),
-        checkWidget('Delivery fees', '\$0.3', false, false),
+        checkWidget('Delivery fees', fees, false, false),
         Divider(color: Color(0xffF0F0F0)),
         Gap(20),
-        checkWidget('Total', '\$0.3', true, false),
+        checkWidget('Total', total, true, false),
         Gap(20),
         checkWidget(
           'Estimated delivery time:',

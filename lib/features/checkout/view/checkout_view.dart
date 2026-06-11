@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/network/api_exceptions.dart';
+import 'package:hungry/features/auth/data/auth_repo.dart';
+import 'package:hungry/features/auth/data/user_model.dart';
 import 'package:hungry/features/cart/data/cart_model.dart';
 import 'package:hungry/features/checkout/data/order_model.dart';
 import 'package:hungry/features/checkout/data/order_repo.dart';
 import 'package:hungry/shared/custom_dialog.dart';
+import 'package:hungry/shared/custom_snack.dart';
 import '../../../core/constants/app_colors.dart';
 import '../widgets/order_details_widget.dart';
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
 
 class CheckoutView extends StatefulWidget {
-  const CheckoutView({super.key, required this.cartItems});
+  const CheckoutView({
+    super.key,
+    required this.cartItems,
+    required this.totalPrice,
+  });
   final List<CartItemModel> cartItems;
+  final String totalPrice;
   @override
   State<CheckoutView> createState() => _CheckoutViewState();
 }
@@ -20,6 +28,8 @@ class CheckoutView extends StatefulWidget {
 class _CheckoutViewState extends State<CheckoutView> {
   final OrderRepo _orderRepo = OrderRepo();
 
+  final AuthRepo _authRepo = AuthRepo();
+  UserModel? userModel;
   Future<void> _saveOrder() async {
     try {
       final orderItems = widget.cartItems.map((item) {
@@ -48,6 +58,30 @@ class _CheckoutViewState extends State<CheckoutView> {
     }
   }
 
+  /// GetProfile
+  Future<void> getProfileData() async {
+    try {
+      final user = await _authRepo.getProfileData();
+      setState(() {
+        userModel = user;
+      });
+    } catch (e) {
+      String error = 'Error in profile';
+      if (e is Failure) {
+        error = e.errorMassage;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(customSnack(msg: error));
+    }
+  }
+
+  @override
+  void initState() {
+    getProfileData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,10 +108,11 @@ class _CheckoutViewState extends State<CheckoutView> {
             ),
             Gap(20),
             OrderDetailsWidget(
-              order: '\$15.46',
-              taxes: '\$0.3',
-              fees: '\$0.3',
-              total: '\$16.06',
+              order: widget.totalPrice,
+              taxes: '\$2',
+              fees: '\$3',
+              total: (double.parse(widget.totalPrice) + 2 + 3)
+                  .toString(),
             ),
             Gap(60),
             CustomText(
@@ -86,7 +121,9 @@ class _CheckoutViewState extends State<CheckoutView> {
               fontWeight: FontWeight.bold,
             ),
             Gap(20),
-            PaymentMethodView(),
+            userModel?.visa == null
+                ? SizedBox.shrink()
+                : PaymentMethodView(visaText: userModel!.visa),
 
             Row(
               children: [
@@ -135,7 +172,8 @@ class _CheckoutViewState extends State<CheckoutView> {
                   color: AppColors.textSecondary,
                 ),
                 CustomText(
-                  text: '\$45.00',
+                  text: (double.parse(widget.totalPrice) + 2 + 3)
+                      .toString(),
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -144,6 +182,7 @@ class _CheckoutViewState extends State<CheckoutView> {
 
             /// Checkout Button
             CustomButton(
+              textColor: Colors.white,
               text: 'Pay Now',
               onTap: () async {
                 try {
@@ -167,8 +206,8 @@ class _CheckoutViewState extends State<CheckoutView> {
 }
 
 class PaymentMethodView extends StatefulWidget {
-  const PaymentMethodView({super.key});
-
+  const PaymentMethodView({super.key, this.visaText});
+  final String? visaText;
   @override
   State<PaymentMethodView> createState() =>
       _PaymentMethodViewState();
@@ -225,8 +264,8 @@ class _PaymentMethodViewState extends State<PaymentMethodView> {
             fontSize: 20,
             color: Colors.white,
           ),
-          subtitle: const CustomText(
-            text: '**** **** **** 1234',
+          subtitle: CustomText(
+            text: widget.visaText ?? '',
             fontSize: 16,
             color: Colors.white,
           ),

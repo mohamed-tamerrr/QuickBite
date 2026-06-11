@@ -187,6 +187,9 @@ class _CartViewState extends State<CartView> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => CheckoutView(
+                            totalPrice: cartResponse!
+                                .cartData
+                                .totalPrice,
                             cartItems:
                                 cartResponse!.cartData.items,
                           ),
