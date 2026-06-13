@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/network/api_exceptions.dart';
+import 'package:hungry/core/utils/app_images.dart';
 import 'package:hungry/features/auth/data/auth_repo.dart';
 import 'package:hungry/shared/custom_snack.dart';
 import '../../../core/constants/app_colors.dart';
@@ -69,17 +70,15 @@ class _SignupViewState extends State<SignupView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 20),
-
                 /// Logo
                 Center(
-                  child: SvgPicture.asset(
-                    'assets/logo/logo.svg',
+                  child: Image.asset(
+                    AppImages.logo,
                     color: AppColors.primary,
-                    width: 92,
+                    width: 100,
                   ),
                 ),
-                const Gap(18),
+
                 Center(
                   child: CustomText(
                     text: 'Create Account',

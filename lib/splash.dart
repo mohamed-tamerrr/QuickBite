@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
+import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/core/utils/app_images.dart';
 import 'package:hungry/features/auth/data/auth_repo.dart';
 import 'features/auth/view/login_view.dart';
 import 'root.dart';
@@ -18,35 +18,30 @@ class _SplashViewState extends State<SplashView>
 
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
-  late Animation<Offset> _slideAnimation;
+  late Animation<Offset> _floatAnimation;
+
   final AuthRepo _authRepo = AuthRepo();
 
-  /// Auto Login
   Future<void> _checkLogin() async {
     try {
       final user = await _authRepo.autoLogin();
+
       if (!mounted) return;
-      if (_authRepo.isGuest) {
-        print('test guest');
+
+      if (_authRepo.isGuest || user != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (c) => Root()),
-        );
-      } else if (user != null) {
-        print('test');
-        print(_authRepo.currentUser);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (c) => Root()),
+          MaterialPageRoute(builder: (_) => Root()),
         );
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (c) => LoginView()),
+          MaterialPageRoute(builder: (_) => const LoginView()),
         );
       }
     } catch (e) {
       debugPrint('Auto login failed: $e');
+
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -62,32 +57,32 @@ class _SplashViewState extends State<SplashView>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 2000),
     );
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
 
-    _scaleAnimation = Tween<double>(begin: .8, end: 1).animate(
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeOutBack,
       ),
     );
 
-    _slideAnimation =
+    _floatAnimation =
         Tween<Offset>(
-          begin: const Offset(0, 0.3),
-          end: Offset.zero,
+          begin: const Offset(0, 0.02),
+          end: const Offset(0, -0.02),
         ).animate(
           CurvedAnimation(
             parent: _controller,
-            curve: Curves.easeOut,
+            curve: Curves.easeInOut,
           ),
         );
 
-    _controller.forward();
+    _controller.repeat(reverse: true);
 
     Future.delayed(const Duration(seconds: 2), _checkLogin);
   }
@@ -101,42 +96,43 @@ class _SplashViewState extends State<SplashView>
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xff6B240C),
-            Color(0xff4A1804),
-            Color(0xff2A0D01),
-          ],
+          colors: AppColors.gradientsSplash,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
       child: Scaffold(
-        // backgroundColor: AppColors.primary,
-        // backgroundColor: Color.fromARGB(204, 49, 20, 5),
         backgroundColor: Colors.transparent,
-        body: Column(
-          children: [
-            const Gap(280),
-
-            /// LOGO ANIMATION
-            FadeTransition(
-              opacity: _fadeAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: SvgPicture.asset('assets/logo/logo.svg'),
+        body: Center(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: SlideTransition(
+              position: _floatAnimation,
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.orange.withValues(
+                        alpha: 0.25,
+                      ),
+                      blurRadius: 80,
+                      spreadRadius: 10,
+                    ),
+                  ],
+                ),
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Image.asset(
+                    AppImages.logo,
+                    color: Colors.white,
+                    width: 240,
+                  ),
+                ),
               ),
             ),
-
-            const Spacer(),
-
-            /// IMAGE ANIMATION
-            SlideTransition(
-              position: _slideAnimation,
-              child: Image.asset('assets/splash/splash.png'),
-            ),
-          ],
+          ),
         ),
       ),
     );

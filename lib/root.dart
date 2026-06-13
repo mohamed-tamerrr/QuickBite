@@ -64,7 +64,6 @@ class _RootState extends State<Root> {
           SalomonBottomBarItem(
             icon: Icon(Icons.person),
             title: Text("Profile"),
-            selectedColor: Colors.teal,
           ),
         ],
       ),

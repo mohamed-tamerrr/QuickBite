@@ -110,7 +110,7 @@ class _HomeViewState extends State<HomeView> {
                             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvts5aHBstDkR8PigS4RmZkbZy78zpZoSuOw&s",
                         name: userModel?.name ?? 'ttttamer',
                       ),
-                      Gap(20),
+
                       SearchField(
                         controller: _searchController,
                         onChanged: (v) {
@@ -131,7 +131,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
 
-              ///  Search + Categories
+              ///   Categories
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(

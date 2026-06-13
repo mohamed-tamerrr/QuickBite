@@ -18,6 +18,13 @@ class AppColors {
 
   // Accent
   static const Color accent = Color(0xff22C55E);
+
+  static const List<Color> gradientsSplash = [
+    Color(0xFF62210B),
+    Color(0xFF5B1D09),
+    Color(0xFF451604),
+  ];
+
   static const List<Color> gradientsPrimary = [
     AppColors.primary,
     AppColors.primaryDark,
