@@ -1,18 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-
+import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/features/cart/data/cart_model.dart';
 import 'package:hungry/features/cart/data/cart_repo.dart';
 import 'package:hungry/features/home/data/model/topping_model.dart';
 import 'package:hungry/features/home/data/repo/product_repo.dart';
 import 'package:hungry/features/product/widgets/custom_button_product_details.dart';
-
 import 'package:hungry/shared/custom_bottom_sheet.dart';
 import 'package:hungry/shared/custom_snack.dart';
 import '../widgets/spicy_slider.dart';
 import '../widgets/topping_card.dart';
-
 import '../../../shared/custom_text.dart';
 
 class ProductDetailsView extends StatefulWidget {
@@ -71,8 +69,8 @@ class _ProductDetailsViewState
         productId: widget.productId,
         qty: 1,
         spicy: value,
-        toppings: [],
-        options: [],
+        toppings: selectedToppings.toList(),
+        options: selectedOptions.toList(),
       );
       await _cartRepo.addToCart(CartRequestModel(items: [cart]));
       setState(() {
@@ -106,124 +104,202 @@ class _ProductDetailsViewState
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
+        centerTitle: true,
+        title: const Text(
+          'Product Details',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
         ),
       ),
-
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      body: SafeArea(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: 120,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    color: Colors.transparent,
-                    child: Image.network(
-                      widget.productImage,
-                      width: 200,
+              /// Product Image
+              Center(
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Hero(
+                      tag: widget.productImage,
+                      child: Image.network(
+                        widget.productImage,
+                        width: 280,
+                        height: 280,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                  ),
-                  SpicySlider(
-                    value: value,
-                    onChanged: (v) {
-                      setState(() {
-                        value = v;
-                      });
-                    },
-                  ),
-                ],
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: AppColors.gradientsPrimary,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: CustomText(
+                        text: widget.productPrice,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const Gap(50),
-              const CustomText(text: 'Toppings', fontSize: 20),
-              const Gap(10),
+
+              const Gap(20),
+
+              /// Spice Level Card
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: .06),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CustomText(
+                      text: 'Spice Level 🌶️',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+
+                    const Gap(15),
+
+                    SpicySlider(
+                      value: value,
+                      onChanged: (v) {
+                        setState(() {
+                          value = v;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const Gap(30),
+
+              const CustomText(
+                text: 'Toppings',
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+
+              const Gap(15),
+
+              /// Toppings
               SizedBox(
                 height: 150,
+                child: toppings == null
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: toppings!.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final topping = toppings![index];
 
-                /// Toppings
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: toppings?.length,
-                  itemBuilder: (context, index) {
-                    final topping = toppings?[index];
-                    final id = topping?.id;
-                    final isSelected = selectedToppings.contains(
-                      id,
-                    );
-                    return topping == null
-                        ? CupertinoActivityIndicator()
-                        : ExtraCard(
-                            onTap: () {
-                              setState(() {
-                                if (selectedToppings.contains(
-                                  id,
-                                )) {
-                                  selectedToppings.remove(id);
-                                } else {
-                                  selectedToppings.add(id!);
-                                }
-                              });
-                            },
+                          final isSelected = selectedToppings
+                              .contains(topping.id);
+
+                          return ExtraCard(
                             image: topping.image,
                             name: topping.name,
                             isSelected: isSelected,
-                          );
-                  },
-                ),
-              ),
-
-              const Gap(50),
-              const CustomText(
-                text: 'Side options',
-                fontSize: 20,
-              ),
-              const Gap(10),
-              SizedBox(
-                height: 150,
-
-                // Options
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: options?.length,
-                  itemBuilder: (context, index) {
-                    final option = options?[index];
-                    final id = option?.id;
-                    final isSelected = selectedOptions.contains(
-                      id,
-                    );
-                    return option == null
-                        ? CupertinoActivityIndicator()
-                        : ExtraCard(
                             onTap: () {
                               setState(() {
-                                if (selectedOptions.contains(
-                                  id,
-                                )) {
-                                  selectedOptions.remove(id);
+                                if (isSelected) {
+                                  selectedToppings.remove(
+                                    topping.id,
+                                  );
                                 } else {
-                                  selectedOptions.add(id!);
+                                  selectedToppings.add(
+                                    topping.id,
+                                  );
                                 }
                               });
                             },
+                          );
+                        },
+                      ),
+              ),
+
+              const Gap(30),
+
+              const CustomText(
+                text: 'Side Options',
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+
+              const Gap(15),
+
+              /// Side Options
+              SizedBox(
+                height: 150,
+                child: options == null
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: options!.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final option = options![index];
+
+                          final isSelected = selectedOptions
+                              .contains(option.id);
+
+                          return ExtraCard(
                             image: option.image,
                             name: option.name,
                             isSelected: isSelected,
+                            onTap: () {
+                              setState(() {
+                                if (isSelected) {
+                                  selectedOptions.remove(
+                                    option.id,
+                                  );
+                                } else {
+                                  selectedOptions.add(option.id);
+                                }
+                              });
+                            },
                           );
-                  },
-                ),
+                        },
+                      ),
               ),
-              Gap(500),
             ],
           ),
         ),
       ),
-
       bottomSheet: CustomBottomSheet(
         isLoading: isLoading,
         onTap: onAddToCart,

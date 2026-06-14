@@ -14,10 +14,12 @@ class SpicySlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomText(
           text:
-              'Customize Your Burger\nto Your Tastes.Ultimate\nExperience',
+              'Customize Your Burger to Your Tastes.\nUltimate Experience',
         ),
         Slider(
           activeColor: AppColors.primary,
@@ -30,7 +32,7 @@ class SpicySlider extends StatelessWidget {
         Row(
           children: [
             CustomText(text: '🥶'),
-            Gap(100),
+            Spacer(),
             CustomText(text: '🌶️'),
           ],
         ),

@@ -43,11 +43,14 @@ class CardItem extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(50),
                 ),
-                child: Image.network(
-                  image,
-                  width: double.infinity,
-                  height: 140,
-                  fit: BoxFit.contain,
+                child: Hero(
+                  tag: image,
+                  child: Image.network(
+                    image,
+                    width: double.infinity,
+                    height: 140,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
 
