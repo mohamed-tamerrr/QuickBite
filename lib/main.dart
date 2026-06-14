@@ -21,7 +21,7 @@ class Hungry extends StatelessWidget {
     return MaterialApp(
       theme: AppTheme.light,
       debugShowCheckedModeBanner: false,
-      title: 'Food Delivery App',
+      title: 'QuickBite',
       home: SplashView(),
     );
   }

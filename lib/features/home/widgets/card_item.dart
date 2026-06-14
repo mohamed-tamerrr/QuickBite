@@ -1,9 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/constants/app_colors.dart';
 
+import '../../../core/constants/app_colors.dart';
 import '../../../shared/custom_text.dart';
 
 class CardItem extends StatelessWidget {
@@ -14,122 +13,185 @@ class CardItem extends StatelessWidget {
     required this.desc,
     required this.rate,
   });
-  final String image, text, desc, rate;
+
+  final String image;
+  final String text;
+  final String desc;
+  final String rate;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.white.withValues(alpha: .5),
-            width: 1.2,
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xffFEFCF8),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .08),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// IMAGE
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(50),
+                ),
+                child: Image.network(
+                  image,
+                  width: double.infinity,
+                  height: 140,
+                  fit: BoxFit.contain,
+                ),
+              ),
 
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: .15),
-              blurRadius: 20,
-              offset: Offset(0, 80),
-            ),
-          ],
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white.withValues(alpha: .15),
-              Colors.white.withValues(alpha: .03),
-            ],
-          ),
-        ),
-
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Padding(
-            padding: const EdgeInsets.all(5),
-            child: Column(
-              // mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Image
-                Center(
-                  child: Image.network(
-                    // fit: BoxFit.scaleDown,
-                    image,
-                    width: 200,
-                    height: 120,
+              /// Favorite Button
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Container(
+                  height: 34,
+                  width: 34,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: .08,
+                        ),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    CupertinoIcons.heart,
+                    size: 18,
+                    color: AppColors.primary,
                   ),
                 ),
+              ),
 
-                /// Details
-                Padding(
+              /// Rating Badge
+              Positioned(
+                left: 10,
+                bottom: 10,
+                child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 2.0,
+                    horizontal: 10,
+                    vertical: 5,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: .65),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      CustomText(
-                        text: text,
-                        fontWeight: FontWeight.w300,
-                        fontSize: 18,
-                        color: Colors.green.shade900,
+                      const Icon(
+                        CupertinoIcons.star_fill,
+                        color: Colors.amber,
+                        size: 14,
                       ),
-                      Gap(5),
-                      CustomText(
-                        maxLines: 3,
-                        // overflow: TextOverflow.ellipsis,
-                        text: desc,
-                        fontSize: 12,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w300,
-                      ),
-                      Gap(10),
-                      Row(
-                        children: [
-                          Icon(
-                            CupertinoIcons.star_fill,
-                            size: 16,
-                            color: Colors.yellow.shade500,
-                          ),
-                          Icon(
-                            CupertinoIcons.star_fill,
-                            size: 16,
-                            color: Colors.yellow.shade500,
-                          ),
-                          Icon(
-                            CupertinoIcons.star_fill,
-                            size: 16,
-                            color: Colors.grey.shade500,
-                          ),
-                          Icon(
-                            CupertinoIcons.star_fill,
-                            size: 16,
-                            color: Colors.grey.shade500,
-                          ),
-                          Gap(6),
-                          CustomText(
-                            text: rate,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
-                          Spacer(),
-                          Icon(
-                            CupertinoIcons.heart,
-                            color: AppColors.primary,
-                            size: 20,
-                          ),
-                        ],
+                      const SizedBox(width: 4),
+                      Text(
+                        rate,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+
+          /// DETAILS
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: text,
+                    maxLines: 2,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+
+                  const Gap(6),
+
+                  Expanded(
+                    child: CustomText(
+                      text: desc,
+                      maxLines: 2,
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+
+                  const Gap(8),
+
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(
+                            alpha: .1,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            16,
+                          ),
+                        ),
+                        child: Text(
+                          'Popular',
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+
+                      const Spacer(),
+
+                      Container(
+                        height: 36,
+                        width: 36,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: AppColors.gradientsPrimary,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          CupertinoIcons.add,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

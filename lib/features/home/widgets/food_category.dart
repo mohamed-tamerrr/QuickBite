@@ -1,15 +1,18 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+
 import '../../../core/constants/app_colors.dart';
-import '../../../shared/custom_text.dart';
 
 class FoodCategory extends StatefulWidget {
-  FoodCategory({
+  const FoodCategory({
     super.key,
     required this.selectedIndex,
     required this.categories,
   });
+
   final int selectedIndex;
-  final List categories;
+  final List<dynamic> categories;
+
   @override
   State<FoodCategory> createState() => _FoodCategoryState();
 }
@@ -25,35 +28,111 @@ class _FoodCategoryState extends State<FoodCategory> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: List.generate(
-          widget.categories.length,
-          (index) => GestureDetector(
-            onTap: () => setState(() => selectedIndex = index),
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 5),
-              padding: EdgeInsets.symmetric(
-                horizontal: 27,
-                vertical: 15,
+    return SizedBox(
+      height: 55,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: widget.categories.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          final isSelected = selectedIndex == index;
+
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedIndex = index;
+              });
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 12,
               ),
               decoration: BoxDecoration(
-                color: selectedIndex == index
-                    ? AppColors.primary
-                    : Color(0xffF3F4F6),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(
+                  isSelected ? 22 : 18,
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isSelected
+                      ? AppColors.gradientsPrimary
+                      : [
+                          Colors.grey.withValues(alpha: .25),
+                          Colors.grey.withValues(alpha: .35),
+                        ],
+                ),
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.primaryLight
+                      : Colors.white.withValues(alpha: .7),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: isSelected
+                        ? AppColors.primary.withValues(
+                            alpha: .25,
+                          )
+                        : Colors.black.withValues(alpha: .05),
+                    blurRadius: isSelected ? 16 : 8,
+                    spreadRadius: isSelected ? 1 : 0,
+                  ),
+                ],
               ),
-              child: CustomText(
-                text: widget.categories[index],
-                fontWeight: FontWeight.w600,
-                color: selectedIndex == index
-                    ? Colors.white
-                    : Colors.grey.shade500,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  isSelected ? 22 : 18,
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 10,
+                    sigmaY: 10,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(
+                          milliseconds: 250,
+                        ),
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.primary,
+                        ),
+                        child: Icon(
+                          isSelected
+                              ? Icons.check
+                              : Icons.restaurant_menu,
+                          size: 14,
+                          color: isSelected
+                              ? AppColors.primary
+                              : Colors.white,
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      Text(
+                        widget.categories[index],
+                        style: TextStyle(
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
