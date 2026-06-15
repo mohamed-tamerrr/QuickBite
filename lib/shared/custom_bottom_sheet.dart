@@ -23,7 +23,9 @@ class CustomBottomSheet extends StatelessWidget {
     return Container(
       height: 110,
       decoration: BoxDecoration(
-        color: AppColors.card,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(30),
+        ),
         gradient: LinearGradient(
           colors: AppColors.gradientsPrimary,
           begin: Alignment.topCenter,
@@ -31,9 +33,9 @@ class CustomBottomSheet extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
+            color: Colors.black.withValues(alpha: .08),
+            blurRadius: 20,
+            offset: const Offset(0, -6),
           ),
         ],
       ),

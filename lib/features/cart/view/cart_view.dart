@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/features/cart/data/cart_model.dart';
 import 'package:hungry/features/cart/data/cart_repo.dart';
+import 'package:hungry/features/cart/widgets/cart_header.dart';
 import 'package:hungry/shared/custom_bottom_sheet.dart';
 import 'package:hungry/shared/custom_snack.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import '../widgets/cart_item.dart';
 import '../../checkout/view/checkout_view.dart';
 import '../../../shared/custom_button.dart';
@@ -25,6 +25,7 @@ class _CartViewState extends State<CartView> {
   bool isLoading = false;
   bool isLoadingItem = false;
   int? deletingItemId;
+  int itemCount = 0;
 
   /// Get Cart Items
   Future<void> getCartItems() async {
@@ -32,11 +33,14 @@ class _CartViewState extends State<CartView> {
       isLoading = true;
     });
     final response = await _cartRepo.getCartItems();
-    final itemCount = response.cartData.items.length;
+    itemCount = response.cartData.items.length;
     setState(() {
       isLoading = false;
       cartResponse = response;
-      quantities = List.generate(itemCount, (_) => 1);
+      // quantities = List.generate(itemCount, (_) => 1);
+      quantities = response.cartData.items
+          .map((e) => e.quantity)
+          .toList();
     });
   }
 
@@ -80,9 +84,35 @@ class _CartViewState extends State<CartView> {
     return Scaffold(
       body: cartResponse?.cartData.items.isEmpty ?? true
           ? Center(
-              child: CustomText(
-                text: 'No items in cart',
-                color: Colors.black,
+              /// No Items
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 90,
+                    color: Colors.grey.shade400,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  const Text(
+                    'Your cart is empty',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    'Add something delicious 🍔',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
               ),
             )
           : Padding(
@@ -93,25 +123,15 @@ class _CartViewState extends State<CartView> {
                 children: [
                   const Gap(60),
 
-                  /// Title
-                  Row(
-                    children: const [
-                      CustomText(
-                        text: "My Cart",
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ],
-                  ),
+                  /// Cart Header
+                  CartHeader(cartResponse: cartResponse),
 
                   /// Cart Items List
                   Expanded(
                     child: ListView.separated(
                       padding: const EdgeInsets.only(top: 10),
-                      itemCount:
-                          cartResponse?.cartData.items.length ??
-                          0,
-                      separatorBuilder: (_, __) => const Gap(15),
+                      itemCount: itemCount,
+                      separatorBuilder: (_, __) => const Gap(18),
                       itemBuilder: (context, index) {
                         final item =
                             cartResponse?.cartData.items[index];
@@ -136,7 +156,6 @@ class _CartViewState extends State<CartView> {
                           },
                           onRemove: () {
                             removeCartItem(item?.itemId ?? 0);
-                            setState() {}
                           },
                           quantity: quantities[index],
                         );
@@ -165,14 +184,15 @@ class _CartViewState extends State<CartView> {
                     children: [
                       const CustomText(
                         text: 'Total',
-                        fontSize: 16,
-                        color: Colors.white,
+                        color: Colors.white70,
+                        fontSize: 14,
                       ),
+
                       CustomText(
-                        text: cartResponse!.cartData.totalPrice
-                            .toString(),
+                        text:
+                            '\$${cartResponse!.cartData.totalPrice}',
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ],
@@ -180,13 +200,14 @@ class _CartViewState extends State<CartView> {
 
                   /// Checkout Button
                   CustomButton(
+                    width: 140,
                     color: Colors.white,
                     textColor: Colors.black,
                     text: 'Checkout',
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => CheckoutView(
+                          builder: (_) => CheckoutView(
                             totalPrice: cartResponse!
                                 .cartData
                                 .totalPrice,

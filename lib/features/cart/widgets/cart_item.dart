@@ -1,142 +1,187 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../shared/custom_text.dart';
 
-class CartItem extends StatefulWidget {
+class CartItem extends StatelessWidget {
   const CartItem({
     super.key,
     required this.text,
     required this.desc,
     required this.image,
-    this.onAdd,
-    this.onRemove,
-    this.onMinus,
     required this.quantity,
     required this.isLoading,
+    this.onAdd,
+    this.onMinus,
+    this.onRemove,
   });
-  final String text, desc, image;
-  final Function()? onAdd;
-  final Function()? onMinus;
-  final Function()? onRemove;
+
+  final String text;
+  final String desc;
+  final String image;
   final int quantity;
   final bool isLoading;
 
-  @override
-  State<CartItem> createState() => _CartItemState();
-}
+  final VoidCallback? onAdd;
+  final VoidCallback? onMinus;
+  final VoidCallback? onRemove;
 
-class _CartItemState extends State<CartItem> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: AppColors.card,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 28,
-          vertical: 20,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .06),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          /// IMAGE
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.network(
+              image,
+              width: 100,
+              height: 100,
+              fit: BoxFit.contain,
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          /// DETAILS
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.network(
-                  widget.image,
-                  fit: BoxFit.cover,
-                  height: 80,
-                  width: 80,
+                Text(
+                  text,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 1.2,
+                  ),
                 ),
-                CustomText(
-                  fontSize: 11,
-                  text: widget.text,
-                  fontWeight: FontWeight.w600,
-                ),
-                CustomText(
-                  text: widget.desc,
-                  color: AppColors.textSecondary,
-                ),
-              ],
-            ),
 
-            Column(
-              children: [
+                const SizedBox(height: 8),
+
+                Text(
+                  desc,
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 14,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
                 Row(
                   children: [
-                    GestureDetector(
-                      onTap: widget.onMinus,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(
+                          alpha: .08,
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(
-                            10,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _QtyButton(
+                            icon: Icons.remove,
+                            onTap: onMinus,
                           ),
-                        ),
-                        child: const Icon(
-                          Icons.remove,
-                          color: Colors.white,
-                        ),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                            ),
+                            child: Text(
+                              quantity.toString(),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+
+                          _QtyButton(
+                            icon: Icons.add,
+                            onTap: onAdd,
+                          ),
+                        ],
                       ),
                     ),
-                    const Gap(30),
-                    CustomText(
-                      text: widget.quantity.toString(),
-                      fontSize: 20,
-                    ),
-                    const Gap(30),
+
+                    const Spacer(),
+
                     GestureDetector(
-                      onTap: widget.onAdd,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(
-                            10,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
-                      ),
+                      onTap: isLoading ? null : onRemove,
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withValues(
+                                  alpha: .08,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.delete_rounded,
+                                color: Colors.red,
+                                size: 22,
+                              ),
+                            ),
                     ),
                   ],
                 ),
-                Gap(30),
-
-                GestureDetector(
-                  onTap: widget.onRemove,
-                  child: Container(
-                    height: 50,
-                    width: 130,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Center(
-                      child: widget.isLoading
-                          ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
-                          : CustomText(
-                              text: 'Remove',
-                              color: Colors.white,
-                            ),
-                    ),
-                  ),
-                ),
               ],
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QtyButton extends StatelessWidget {
+  const _QtyButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: AppColors.gradientsPrimary,
+          ),
+          borderRadius: BorderRadius.circular(10),
         ),
+        child: Icon(icon, color: Colors.white, size: 18),
       ),
     );
   }

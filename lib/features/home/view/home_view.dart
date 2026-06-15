@@ -153,7 +153,7 @@ class _HomeViewState extends State<HomeView> {
                   left: 10,
                   right: 10,
                   bottom: 120,
-                  top: 20,
+                  top: 12,
                 ),
                 sliver: SliverGrid(
                   gridDelegate:
