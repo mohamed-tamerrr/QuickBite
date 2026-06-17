@@ -85,6 +85,7 @@ class _CheckoutViewState extends State<CheckoutView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /// App Bar
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -96,68 +97,111 @@ class _CheckoutViewState extends State<CheckoutView> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomText(
-              text: 'Order Summary',
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-            ),
-            Gap(20),
-            OrderDetailsWidget(
-              order: widget.totalPrice,
-              taxes: '\$2',
-              fees: '\$3',
-              total: (double.parse(widget.totalPrice) + 2 + 3)
-                  .toString(),
-            ),
-            Gap(60),
-            CustomText(
-              text: 'Payment methods',
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-            ),
-            Gap(20),
-            userModel?.visa == null
-                ? SizedBox.shrink()
-                : PaymentMethodView(visaText: userModel!.visa),
 
-            Row(
-              children: [
-                Checkbox(
-                  activeColor: AppColors.primary,
-                  value: true,
-                  onChanged: (value) {},
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: 140,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const CustomText(
+                    text: 'Checkout',
+                    fontSize: 32,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  const Gap(6),
+                  CustomText(
+                    text: 'Review your order before payment',
+                    color: Colors.grey.shade600,
+                    fontSize: 15,
+                  ),
+                ],
+              ),
+              Gap(20),
+
+              /// Order Details
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: .05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                CustomText(
-                  text: 'Save card details for future payments',
-                  color: AppColors.textSecondary,
+                child: OrderDetailsWidget(
+                  order: widget.totalPrice,
+                  taxes: '\$2',
+                  fees: '\$3',
+                  total:
+                      (double.parse(widget.totalPrice) + 2 + 3)
+                          .toString(),
                 ),
-              ],
-            ),
-          ],
+              ),
+              Gap(60),
+              CustomText(
+                text: 'Payment methods',
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+              ),
+              Gap(20),
+              userModel?.visa == null
+                  ? SizedBox.shrink()
+                  : PaymentMethodView(visaText: userModel!.visa),
+
+              /// Check Box
+              Row(
+                children: [
+                  Checkbox(
+                    activeColor: AppColors.primary,
+                    value: true,
+                    onChanged: (value) {},
+                  ),
+                  Expanded(
+                    child: CustomText(
+                      text:
+                          'Save card details for future payments',
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
 
+      /// bottom Sheet
       bottomSheet: Container(
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 10,
-              color: AppColors.textPrimary.withOpacity(0.1),
-              offset: const Offset(0, -3),
-            ),
-          ],
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
-        ),
         height: 120,
         padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: AppColors.gradientsPrimary,
+          ),
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(30),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .08),
+              blurRadius: 20,
+              offset: const Offset(0, -6),
+            ),
+          ],
+        ),
+
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -168,13 +212,14 @@ class _CheckoutViewState extends State<CheckoutView> {
               children: [
                 const CustomText(
                   text: 'Total',
-                  fontSize: 16,
-                  color: AppColors.textSecondary,
+                  color: Colors.white70,
+                  fontSize: 14,
                 ),
                 CustomText(
-                  text: (double.parse(widget.totalPrice) + 2 + 3)
-                      .toString(),
-                  fontSize: 24,
+                  text:
+                      '\$${(double.parse(widget.totalPrice) + 5).toStringAsFixed(2)}',
+                  color: Colors.white,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
               ],
@@ -182,7 +227,8 @@ class _CheckoutViewState extends State<CheckoutView> {
 
             /// Checkout Button
             CustomButton(
-              textColor: Colors.white,
+              color: Colors.white,
+              width: 150,
               text: 'Pay Now',
               onTap: () async {
                 try {
@@ -207,7 +253,9 @@ class _CheckoutViewState extends State<CheckoutView> {
 
 class PaymentMethodView extends StatefulWidget {
   const PaymentMethodView({super.key, this.visaText});
+
   final String? visaText;
+
   @override
   State<PaymentMethodView> createState() =>
       _PaymentMethodViewState();
@@ -216,70 +264,131 @@ class PaymentMethodView extends StatefulWidget {
 class _PaymentMethodViewState extends State<PaymentMethodView> {
   int selectedValue = 1;
 
+  Widget paymentCard({
+    required int value,
+    required String title,
+    String? subtitle,
+    required String image,
+  }) {
+    final isSelected = selectedValue == value;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedValue = value;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : Colors.grey.shade200,
+            width: isSelected ? 2 : 1,
+          ),
+
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .05),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+
+        child: Row(
+          children: [
+            Container(
+              width: 55,
+              height: 55,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: .08),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Image.asset(image),
+            ),
+
+            const Gap(16),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+
+                  if (subtitle != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              width: 26,
+              height: 26,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected
+                    ? AppColors.primary
+                    : Colors.transparent,
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.primary
+                      : Colors.grey.shade400,
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 16,
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ListTile(
-          onTap: () => setState(() => selectedValue = 1),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 5,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          tileColor: AppColors.primaryDark,
-          title: const Text(
-            'Cash on Delivery',
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          leading: Image.asset('assets/cash.png'),
-          trailing: Radio<int>(
-            activeColor: AppColors.card,
-            value: 1,
-            groupValue: selectedValue,
-            onChanged: (value) {
-              setState(() {
-                selectedValue = value!;
-              });
-            },
-          ),
+        paymentCard(
+          value: 1,
+          title: 'Cash on Delivery',
+          image: 'assets/cash.png',
         ),
 
-        const Gap(20),
+        const Gap(16),
 
-        ListTile(
-          onTap: () => setState(() => selectedValue = 2),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 5,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          tileColor: AppColors.primary,
-          title: const CustomText(
-            text: 'Visa',
-            fontSize: 20,
-            color: Colors.white,
-          ),
-          subtitle: CustomText(
-            text: widget.visaText ?? '',
-            fontSize: 16,
-            color: Colors.white,
-          ),
-          leading: Image.asset('assets/visa.png'),
-          trailing: Radio<int>(
-            activeColor: Colors.white,
-            value: 2,
-            groupValue: selectedValue,
-            onChanged: (value) {
-              setState(() {
-                selectedValue = value!;
-              });
-            },
-          ),
+        paymentCard(
+          value: 2,
+          title: 'Visa',
+          image: 'assets/visa.png',
         ),
       ],
     );
