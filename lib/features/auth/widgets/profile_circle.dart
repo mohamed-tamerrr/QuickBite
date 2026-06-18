@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:QuickBite/core/constants/app_colors.dart';
+import 'package:QuickBite/features/auth/data/user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/features/auth/data/user_model.dart';
 
 class ProfileCircle extends StatelessWidget {
   const ProfileCircle({

@@ -1,8 +1,8 @@
+import 'package:QuickBite/core/constants/app_colors.dart';
+import 'package:QuickBite/shared/custom_button.dart';
+import 'package:QuickBite/shared/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/shared/custom_button.dart';
-import 'package:hungry/shared/custom_text.dart';
 
 class CustomDialog extends StatelessWidget {
   const CustomDialog({super.key});

@@ -1,6 +1,6 @@
-import 'package:hungry/core/network/api_service.dart';
-import 'package:hungry/features/home/data/model/product_model.dart';
-import 'package:hungry/features/home/data/model/topping_model.dart';
+import 'package:QuickBite/core/network/api_service.dart';
+import 'package:QuickBite/features/home/data/model/product_model.dart';
+import 'package:QuickBite/features/home/data/model/topping_model.dart';
 
 class ProductRepo {
   final ApiService _apiService = ApiService();

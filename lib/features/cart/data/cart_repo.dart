@@ -1,6 +1,6 @@
-import 'package:hungry/core/network/api_exceptions.dart';
-import 'package:hungry/core/network/api_service.dart';
-import 'package:hungry/features/cart/data/cart_model.dart';
+import 'package:QuickBite/core/network/api_exceptions.dart';
+import 'package:QuickBite/core/network/api_service.dart';
+import 'package:QuickBite/features/cart/data/cart_model.dart';
 
 class CartRepo {
   final ApiService _apiService = ApiService();

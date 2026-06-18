@@ -1,14 +1,14 @@
+import 'package:QuickBite/features/cart/data/cart_model.dart';
+import 'package:QuickBite/features/cart/data/cart_repo.dart';
+import 'package:QuickBite/features/cart/widgets/cart_header.dart';
+import 'package:QuickBite/shared/custom_bottom_sheet.dart';
+import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/features/cart/data/cart_model.dart';
-import 'package:hungry/features/cart/data/cart_repo.dart';
-import 'package:hungry/features/cart/widgets/cart_header.dart';
-import 'package:hungry/shared/custom_bottom_sheet.dart';
-import 'package:hungry/shared/custom_snack.dart';
-import '../widgets/cart_item.dart';
-import '../../checkout/view/checkout_view.dart';
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
+import '../../checkout/view/checkout_view.dart';
+import '../widgets/cart_item.dart';
 
 class CartView extends StatefulWidget {
   const CartView({super.key});

@@ -1,18 +1,20 @@
+import 'package:QuickBite/core/network/api_exceptions.dart';
+import 'package:QuickBite/features/auth/data/auth_repo.dart';
+import 'package:QuickBite/features/auth/data/user_model.dart';
+import 'package:QuickBite/features/home/data/model/product_model.dart';
+import 'package:QuickBite/features/home/data/repo/product_repo.dart';
+import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/network/api_exceptions.dart';
-import 'package:hungry/features/auth/data/auth_repo.dart';
-import 'package:hungry/features/auth/data/user_model.dart';
-import 'package:hungry/features/home/data/model/product_model.dart';
-import 'package:hungry/features/home/data/repo/product_repo.dart';
-import 'package:hungry/shared/custom_snack.dart';
+
 import 'package:shimmer/shimmer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+
+import '../../product/view/product_details_view.dart';
 import '../widgets/card_item.dart';
 import '../widgets/food_category.dart';
 import '../widgets/search_field.dart';
 import '../widgets/user_header.dart';
-import '../../product/view/product_details_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

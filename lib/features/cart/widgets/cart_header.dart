@@ -1,5 +1,5 @@
+import 'package:QuickBite/features/cart/data/cart_model.dart';
 import 'package:flutter/material.dart';
-import 'package:hungry/features/cart/data/cart_model.dart';
 
 class CartHeader extends StatelessWidget {
   const CartHeader({super.key, required this.cartResponse});

@@ -1,7 +1,8 @@
+import 'package:QuickBite/core/utils/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/utils/app_images.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../shared/custom_text.dart';
 

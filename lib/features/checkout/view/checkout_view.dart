@@ -1,17 +1,18 @@
+import 'package:QuickBite/core/network/api_exceptions.dart';
+import 'package:QuickBite/features/auth/data/auth_repo.dart';
+import 'package:QuickBite/features/auth/data/user_model.dart';
+import 'package:QuickBite/features/cart/data/cart_model.dart';
+import 'package:QuickBite/features/checkout/data/order_model.dart';
+import 'package:QuickBite/features/checkout/data/order_repo.dart';
+import 'package:QuickBite/shared/custom_dialog.dart';
+import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/network/api_exceptions.dart';
-import 'package:hungry/features/auth/data/auth_repo.dart';
-import 'package:hungry/features/auth/data/user_model.dart';
-import 'package:hungry/features/cart/data/cart_model.dart';
-import 'package:hungry/features/checkout/data/order_model.dart';
-import 'package:hungry/features/checkout/data/order_repo.dart';
-import 'package:hungry/shared/custom_dialog.dart';
-import 'package:hungry/shared/custom_snack.dart';
+
 import '../../../core/constants/app_colors.dart';
-import '../widgets/order_details_widget.dart';
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
+import '../widgets/order_details_widget.dart';
 
 class CheckoutView extends StatefulWidget {
   const CheckoutView({

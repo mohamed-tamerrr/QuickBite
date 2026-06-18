@@ -1,14 +1,15 @@
+import 'package:QuickBite/core/constants/app_colors.dart';
+import 'package:QuickBite/features/cart/data/cart_model.dart';
+import 'package:QuickBite/features/cart/data/cart_repo.dart';
+import 'package:QuickBite/features/home/data/model/topping_model.dart';
+import 'package:QuickBite/features/home/data/repo/product_repo.dart';
+import 'package:QuickBite/features/product/widgets/custom_button_product_details.dart';
+import 'package:QuickBite/shared/custom_bottom_sheet.dart';
+import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/features/cart/data/cart_model.dart';
-import 'package:hungry/features/cart/data/cart_repo.dart';
-import 'package:hungry/features/home/data/model/topping_model.dart';
-import 'package:hungry/features/home/data/repo/product_repo.dart';
-import 'package:hungry/features/product/widgets/custom_button_product_details.dart';
-import 'package:hungry/shared/custom_bottom_sheet.dart';
-import 'package:hungry/shared/custom_snack.dart';
+
 import '../widgets/spicy_slider.dart';
 import '../widgets/topping_card.dart';
 import '../../../shared/custom_text.dart';

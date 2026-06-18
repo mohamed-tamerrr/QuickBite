@@ -1,9 +1,9 @@
+import 'package:QuickBite/core/constants/app_colors.dart';
+import 'package:QuickBite/features/auth/data/user_model.dart';
+import 'package:QuickBite/features/auth/widgets/custom_profile_field.dart';
+import 'package:QuickBite/shared/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/features/auth/data/user_model.dart';
-import 'package:hungry/features/auth/widgets/custom_profile_field.dart';
-import 'package:hungry/shared/custom_text.dart';
 
 class AccountInformation extends StatelessWidget {
   const AccountInformation({

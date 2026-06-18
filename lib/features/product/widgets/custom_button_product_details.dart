@@ -1,6 +1,6 @@
+import 'package:QuickBite/core/constants/app_colors.dart';
+import 'package:QuickBite/shared/custom_text.dart';
 import 'package:flutter/material.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/shared/custom_text.dart';
 
 class CustomProductDetailsButton extends StatefulWidget {
   const CustomProductDetailsButton({

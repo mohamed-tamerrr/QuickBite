@@ -1,5 +1,5 @@
+import 'package:QuickBite/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:hungry/core/constants/app_colors.dart';
 
 class CustomProfileField extends StatelessWidget {
   const CustomProfileField({

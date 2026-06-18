@@ -1,16 +1,17 @@
+import 'package:QuickBite/core/network/api_exceptions.dart';
+import 'package:QuickBite/core/utils/app_images.dart';
+import 'package:QuickBite/features/auth/data/auth_repo.dart';
+import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/network/api_exceptions.dart';
-import 'package:hungry/core/utils/app_images.dart';
-import 'package:hungry/features/auth/data/auth_repo.dart';
-import 'package:hungry/shared/custom_snack.dart';
+
 import '../../../core/constants/app_colors.dart';
-import 'signup_view.dart';
-import '../widgets/auth_btn.dart';
 import '../../../root.dart';
 import '../../../shared/custom_text.dart';
 import '../../../shared/custom_text_form_field.dart';
+import '../widgets/auth_btn.dart';
+import 'signup_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

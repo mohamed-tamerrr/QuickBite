@@ -1,15 +1,15 @@
 import 'dart:io';
+import 'package:QuickBite/core/network/api_exceptions.dart';
+import 'package:QuickBite/features/auth/data/auth_repo.dart';
+import 'package:QuickBite/features/auth/data/user_model.dart';
+import 'package:QuickBite/features/auth/view/login_view.dart';
+import 'package:QuickBite/features/auth/widgets/account_inf.dart';
+import 'package:QuickBite/features/auth/widgets/profile_circle.dart';
+import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/network/api_exceptions.dart';
-import 'package:hungry/features/auth/data/auth_repo.dart';
-import 'package:hungry/features/auth/data/user_model.dart';
-import 'package:hungry/features/auth/view/login_view.dart';
-import 'package:hungry/features/auth/widgets/account_inf.dart';
-import 'package:hungry/features/auth/widgets/custom_profile_field.dart';
-import 'package:hungry/features/auth/widgets/profile_circle.dart';
-import 'package:hungry/shared/custom_snack.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/constants/app_colors.dart';

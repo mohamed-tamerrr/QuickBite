@@ -1,8 +1,5 @@
+import 'package:QuickBite/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/features/product/view/product_details_view.dart';
-import 'package:hungry/features/product/widgets/custom_button_product_details.dart';
-import 'package:hungry/shared/custom_text.dart';
 
 class CustomBottomSheet extends StatelessWidget {
   const CustomBottomSheet({
