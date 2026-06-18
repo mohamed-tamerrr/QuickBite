@@ -51,37 +51,22 @@ This project was built as a portfolio project to strengthen Flutter development 
 
 ## 🖼️ Screenshots
 
-### Splash Screen
+<p align="center">
+  <img src="screenshots/splash.jpeg" width="250"/>
+  <img src="screenshots/login.jpeg" width="250"/>
+  <img src="screenshots/home.jpeg" width="250"/>
+</p>
 
-![Splash Screen](screenshots/splash.jpeg)
+<p align="center">
+  <img src="screenshots/product_details.jpeg" width="250"/>
+  <img src="screenshots/cart.jpeg" width="250"/>
+  <img src="screenshots/checkout.jpeg" width="250"/>
+</p>
 
-### Login Screen
-
-![Login Screen](screenshots/login.jpeg)
-
-### Home Screen
-
-![Home Screen](screenshots/home.jpeg)
-
-### Product Details
-
-![Product Details](screenshots/product_details.jpeg)
-
-### Cart Screen
-
-![Cart Screen](screenshots/cart.jpeg)
-
-### Checkout Screen
-
-![Checkout Screen](screenshots/checkout.jpeg)
-
-### Order History
-
-![Order History](screenshots/order_history.jpeg)
-
-### Profile Screen
-
-![Profile Screen](screenshots/profile.jpeg)
+<p align="center">
+  <img src="screenshots/order_history.jpeg" width="250"/>
+  <img src="screenshots/profile.jpeg" width="250"/>
+</p>
 
 ---
 
