@@ -7,10 +7,12 @@ environment:
   sdk: ^3.11.4
 
 dependencies:
+  bloc: ^9.2.1
   cupertino_icons: ^1.0.8
   dio: ^5.9.2
   flutter:
     sdk: flutter
+  flutter_bloc: ^9.1.1
   flutter_launcher_icons: ^0.14.4
   flutter_svg: ^2.2.4
   gap: ^3.0.1

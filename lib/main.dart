@@ -1,3 +1,5 @@
+import 'package:QuickBite/features/auth/view/login_view.dart';
+
 import 'splash.dart';
 import 'package:flutter/material.dart';
 

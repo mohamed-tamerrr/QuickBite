@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:QuickBite/core/network/api_exceptions.dart';
+import 'package:QuickBite/features/auth/cubit/auth_cubit.dart';
 import 'package:QuickBite/features/auth/data/auth_repo.dart';
 import 'package:QuickBite/features/auth/data/user_model.dart';
 import 'package:QuickBite/features/auth/view/login_view.dart';
@@ -7,6 +8,7 @@ import 'package:QuickBite/features/auth/widgets/account_inf.dart';
 import 'package:QuickBite/features/auth/widgets/profile_circle.dart';
 import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 
@@ -121,7 +123,12 @@ class _ProfileViewState extends State<ProfileView> {
       await _authRepo.logout();
       await Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginView()),
+        MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => AuthCubit(),
+            child: LoginView(),
+          ),
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

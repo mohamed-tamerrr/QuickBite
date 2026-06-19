@@ -1,7 +1,9 @@
 import 'package:QuickBite/core/constants/app_colors.dart';
 import 'package:QuickBite/core/utils/app_images.dart';
+import 'package:QuickBite/features/auth/cubit/auth_cubit.dart';
 import 'package:QuickBite/features/auth/data/auth_repo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'features/auth/view/login_view.dart';
 import 'root.dart';
@@ -37,7 +39,12 @@ class _SplashViewState extends State<SplashView>
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const LoginView()),
+          MaterialPageRoute(
+            builder: (_) => BlocProvider<AuthCubit>(
+              create: (context) => AuthCubit(),
+              child: const LoginView(),
+            ),
+          ),
         );
       }
     } catch (e) {
@@ -46,7 +53,12 @@ class _SplashViewState extends State<SplashView>
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const LoginView()),
+          MaterialPageRoute(
+            builder: (_) => BlocProvider(
+              create: (context) => AuthCubit(),
+              child: const LoginView(),
+            ),
+          ),
         );
       }
     }
