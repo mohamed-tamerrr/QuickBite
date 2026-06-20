@@ -4,6 +4,7 @@ import 'package:QuickBite/features/home/data/model/product_model.dart';
 import 'package:QuickBite/features/home/data/model/topping_model.dart';
 import 'package:QuickBite/features/home/data/repo/home_repo.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part 'home_state.dart';
@@ -12,6 +13,9 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitial());
 
   final HomeRepo _homeRepo = HomeRepo();
+
+  final TextEditingController searchController =
+      TextEditingController();
   List<ProductModel>? products = [];
   List<ProductModel>? allProducts = [];
 
@@ -29,7 +33,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeLoading());
     try {
       products = await _homeRepo.getProduct();
-
+      allProducts = products;
       emit(HomeSuccess());
     } catch (e) {
       String error = 'Something went wrong !';
@@ -38,6 +42,19 @@ class HomeCubit extends Cubit<HomeState> {
       }
       emit(HomeFailure(error));
     }
+  }
+
+  /// Search
+  void searchProducts(String v) {
+    final query = v.toLowerCase();
+    products = allProducts
+        ?.where(
+          (element) =>
+              element.name.toLowerCase().contains(query),
+        )
+        .toList();
+
+    emit(HomeSuccess());
   }
 
   /// Get Toppings

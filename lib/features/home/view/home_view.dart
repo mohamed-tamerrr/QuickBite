@@ -46,8 +46,6 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  final TextEditingController _searchController =
-      TextEditingController();
   @override
   void initState() {
     getProfileData();
@@ -56,7 +54,6 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void dispose() {
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -97,20 +94,8 @@ class _HomeViewState extends State<HomeView> {
                           ),
 
                           SearchField(
-                            controller: _searchController,
-                            onChanged: (v) {
-                              final query = v.toLowerCase();
-                              setState(() {
-                                cubit.products = cubit
-                                    .allProducts
-                                    ?.where(
-                                      (element) => element.name
-                                          .toLowerCase()
-                                          .contains(query),
-                                    )
-                                    .toList();
-                              });
-                            },
+                            controller: cubit.searchController,
+                            onChanged: cubit.searchProducts,
                           ),
                         ],
                       ),
