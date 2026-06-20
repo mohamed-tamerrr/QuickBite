@@ -3,7 +3,7 @@ import 'package:QuickBite/features/cart/data/cart_model.dart';
 import 'package:QuickBite/features/cart/data/cart_repo.dart';
 import 'package:QuickBite/features/home/data/model/topping_model.dart';
 import 'package:QuickBite/features/home/data/repo/product_repo.dart';
-import 'package:QuickBite/features/product/widgets/custom_button_product_details.dart';
+import 'package:QuickBite/features/home/widgets/custom_button_product_details.dart';
 import 'package:QuickBite/shared/custom_bottom_sheet.dart';
 import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/cupertino.dart';

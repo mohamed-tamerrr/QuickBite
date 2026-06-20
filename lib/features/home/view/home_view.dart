@@ -11,7 +11,7 @@ import 'package:gap/gap.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../product/view/product_details_view.dart';
+import 'product_details_view.dart';
 import '../widgets/card_item.dart';
 import '../widgets/food_category.dart';
 import '../widgets/search_field.dart';

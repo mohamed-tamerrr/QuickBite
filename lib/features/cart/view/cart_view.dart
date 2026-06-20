@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
-import '../../checkout/view/checkout_view.dart';
+import '../../orders/views/checkout_view.dart';
 import '../widgets/cart_item.dart';
 
 class CartView extends StatefulWidget {

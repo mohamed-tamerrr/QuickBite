@@ -1,5 +1,5 @@
-import 'package:QuickBite/features/checkout/data/order_model.dart';
-import 'package:QuickBite/features/checkout/data/order_repo.dart';
+import 'package:QuickBite/features/orders/data/order_model.dart';
+import 'package:QuickBite/features/orders/data/order_repo.dart';
 import 'package:QuickBite/shared/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

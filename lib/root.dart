@@ -3,7 +3,7 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'features/auth/view/profile_view.dart';
 import 'features/cart/view/cart_view.dart';
 import 'features/home/view/home_view.dart';
-import 'features/orderHistory/view/order_history_view.dart';
+import 'features/orders/views/order_history_view.dart';
 
 class Root extends StatefulWidget {
   const Root({super.key});

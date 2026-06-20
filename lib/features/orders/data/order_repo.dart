@@ -1,6 +1,6 @@
 import 'package:QuickBite/core/network/api_exceptions.dart';
 import 'package:QuickBite/core/network/api_service.dart';
-import 'package:QuickBite/features/checkout/data/order_model.dart';
+import 'package:QuickBite/features/orders/data/order_model.dart';
 
 class OrderRepo {
   ApiService _apiService = ApiService();
