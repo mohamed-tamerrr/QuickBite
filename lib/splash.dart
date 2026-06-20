@@ -39,12 +39,7 @@ class _SplashViewState extends State<SplashView>
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider<AuthCubit>(
-              create: (context) => AuthCubit(),
-              child: const LoginView(),
-            ),
-          ),
+          MaterialPageRoute(builder: (_) => const LoginView()),
         );
       }
     } catch (e) {
@@ -53,12 +48,7 @@ class _SplashViewState extends State<SplashView>
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider(
-              create: (context) => AuthCubit(),
-              child: const LoginView(),
-            ),
-          ),
+          MaterialPageRoute(builder: (_) => const LoginView()),
         );
       }
     }
