@@ -3,7 +3,6 @@ import 'package:QuickBite/core/utils/app_images.dart';
 import 'package:QuickBite/features/auth/data/auth_repo.dart';
 import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 
 import '../../../core/constants/app_colors.dart';

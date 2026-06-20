@@ -117,7 +117,7 @@ class _OrderHistoryViewState extends State<OrderHistoryView> {
               child: ListView.separated(
                 padding: const EdgeInsets.only(top: 10),
                 itemCount: _orders?.data?.length ?? 0,
-                separatorBuilder: (_, __) => const Gap(15),
+                separatorBuilder: (_, _) => const Gap(15),
                 itemBuilder: (context, index) {
                   final order = _orders!.data![index];
                   return Container(

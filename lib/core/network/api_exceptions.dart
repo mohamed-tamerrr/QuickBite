@@ -7,7 +7,7 @@ class Failure {
 
   @override
   String toString() {
-    return '$errorMassage';
+    return errorMassage;
   }
 }
 
@@ -18,7 +18,7 @@ class ApiExceptions extends Failure {
     final statusCode = dioexp.response?.statusCode;
     final data = dioexp.response?.data;
 
-    if (data is Map<String, dynamic> && data != null) {
+    if (data is Map<String, dynamic>) {
       return ApiExceptions(
         errorMassage: data['message'],
         statusCode: statusCode,

@@ -15,8 +15,6 @@ class AppTheme {
       onSecondary: Colors.white,
       secondaryContainer: AppColors.accent.withOpacity(0.14),
       onSecondaryContainer: AppColors.textPrimary,
-      background: AppColors.background,
-      onBackground: AppColors.textPrimary,
       surface: AppColors.card,
       onSurface: AppColors.textPrimary,
       error: Colors.red.shade700,
@@ -79,10 +77,10 @@ class AppTheme {
     ),
     iconTheme: const IconThemeData(color: AppColors.primary),
     checkboxTheme: CheckboxThemeData(
-      fillColor: MaterialStateProperty.all(AppColors.primary),
+      fillColor: WidgetStateProperty.all(AppColors.primary),
     ),
     radioTheme: RadioThemeData(
-      fillColor: MaterialStateProperty.all(AppColors.primary),
+      fillColor: WidgetStateProperty.all(AppColors.primary),
     ),
     textTheme: const TextTheme(
       titleLarge: TextStyle(

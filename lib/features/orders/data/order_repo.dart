@@ -3,7 +3,7 @@ import 'package:QuickBite/core/network/api_service.dart';
 import 'package:QuickBite/features/orders/data/order_model.dart';
 
 class OrderRepo {
-  ApiService _apiService = ApiService();
+  final ApiService _apiService = ApiService();
   final String _orderEndpoint = '/orders';
 
   /// Save Order

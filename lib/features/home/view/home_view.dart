@@ -51,7 +51,6 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     getProfileData();
-    // getProducts();
     super.initState();
   }
 
@@ -237,6 +236,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                             ),
                             child: CardItem(
+                              id: product.id,
                               text: product.name,
                               image: product.image,
                               desc: product.desc,

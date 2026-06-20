@@ -34,7 +34,7 @@ class _FoodCategoryState extends State<FoodCategory> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: widget.categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           final isSelected = selectedIndex == index;
 

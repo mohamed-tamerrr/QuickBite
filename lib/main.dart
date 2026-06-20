@@ -1,5 +1,5 @@
 import 'package:QuickBite/features/auth/cubit/auth_cubit.dart';
-import 'package:QuickBite/features/auth/view/login_view.dart';
+
 import 'package:QuickBite/features/home/cubit/home_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

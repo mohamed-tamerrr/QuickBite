@@ -2,17 +2,7 @@ import 'package:QuickBite/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomBottomSheet extends StatelessWidget {
-  const CustomBottomSheet({
-    super.key,
-
-    this.isLoading = false,
-    this.onTap,
-
-    required this.body,
-  });
-
-  final bool isLoading;
-  final void Function()? onTap;
+  const CustomBottomSheet({super.key, required this.body});
 
   final Widget? body;
   @override

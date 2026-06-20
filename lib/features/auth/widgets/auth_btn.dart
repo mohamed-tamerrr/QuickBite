@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 
 class AuthBtn extends StatelessWidget {
   const AuthBtn({
-    Key? key,
+    super.key,
 
     required this.text,
     required this.onTap,
     this.textColor,
     this.color,
     this.borderColor,
-  }) : super(key: key);
+  });
 
   final String text;
   final void Function() onTap;

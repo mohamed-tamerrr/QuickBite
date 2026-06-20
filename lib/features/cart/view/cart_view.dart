@@ -131,7 +131,7 @@ class _CartViewState extends State<CartView> {
                     child: ListView.separated(
                       padding: const EdgeInsets.only(top: 10),
                       itemCount: itemCount,
-                      separatorBuilder: (_, __) => const Gap(18),
+                      separatorBuilder: (_, _) => const Gap(18),
                       itemBuilder: (context, index) {
                         final item =
                             cartResponse?.cartData.items[index];

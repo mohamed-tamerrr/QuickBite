@@ -13,3 +13,12 @@ final class HomeFailure extends HomeState {
   String errorMsg;
   HomeFailure(this.errorMsg);
 }
+
+final class AddCartLoading extends HomeState {}
+
+final class AddCartSuccess extends HomeState {}
+
+final class AddCartFailure extends HomeState {
+  String errorMsg;
+  AddCartFailure(this.errorMsg);
+}

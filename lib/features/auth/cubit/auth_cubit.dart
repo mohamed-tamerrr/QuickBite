@@ -2,7 +2,6 @@ import 'package:QuickBite/core/network/api_exceptions.dart';
 import 'package:QuickBite/features/auth/data/auth_repo.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 
 part 'auth_state.dart';
 
