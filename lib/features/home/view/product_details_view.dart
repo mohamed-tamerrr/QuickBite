@@ -1,4 +1,5 @@
 import 'package:QuickBite/core/constants/app_colors.dart';
+import 'package:QuickBite/features/cart/cubit/cart_cubit.dart';
 import 'package:QuickBite/features/cart/data/cart_model.dart';
 import 'package:QuickBite/features/home/cubit/home_cubit.dart';
 import 'package:QuickBite/features/home/widgets/custom_button_product_details.dart';
@@ -30,9 +31,6 @@ class ProductDetailsView extends StatefulWidget {
 class _ProductDetailsViewState
     extends State<ProductDetailsView> {
   double value = 0.5;
-
-  Set<int> selectedToppings = {};
-  Set<int> selectedOptions = {};
 
   bool isLoading = false;
 
@@ -196,7 +194,8 @@ class _ProductDetailsViewState
                               final topping =
                                   cubit.toppings![index];
 
-                              final isSelected = selectedToppings
+                              final isSelected = cubit
+                                  .selectedToppings
                                   .contains(topping.id);
 
                               return ExtraCard(
@@ -206,11 +205,10 @@ class _ProductDetailsViewState
                                 onTap: () {
                                   setState(() {
                                     if (isSelected) {
-                                      selectedToppings.remove(
-                                        topping.id,
-                                      );
+                                      cubit.selectedToppings
+                                          .remove(topping.id);
                                     } else {
-                                      selectedToppings.add(
+                                      cubit.selectedToppings.add(
                                         topping.id,
                                       );
                                     }
@@ -247,7 +245,8 @@ class _ProductDetailsViewState
                               final option =
                                   cubit.products![index];
 
-                              final isSelected = selectedOptions
+                              final isSelected = cubit
+                                  .selectedOptions
                                   .contains(option.id);
 
                               return ExtraCard(
@@ -257,11 +256,10 @@ class _ProductDetailsViewState
                                 onTap: () {
                                   setState(() {
                                     if (isSelected) {
-                                      selectedOptions.remove(
-                                        option.id,
-                                      );
+                                      cubit.selectedOptions
+                                          .remove(option.id);
                                     } else {
-                                      selectedOptions.add(
+                                      cubit.selectedOptions.add(
                                         option.id,
                                       );
                                     }
@@ -300,7 +298,7 @@ class _ProductDetailsViewState
                   text: 'Add To Cart',
                   textColor: Colors.black,
                   iconColor: Colors.black,
-                  onTap: () {
+                  onTap: () async {
                     cubit.addToCart(
                       CartRequestModel(
                         items: [
@@ -314,6 +312,9 @@ class _ProductDetailsViewState
                         ],
                       ),
                     );
+                    await context
+                        .read<CartCubit>()
+                        .getCartItems();
                   },
                 ),
               ],

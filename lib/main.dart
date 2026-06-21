@@ -1,4 +1,5 @@
 import 'package:QuickBite/features/auth/cubit/auth_cubit.dart';
+import 'package:QuickBite/features/cart/cubit/cart_cubit.dart';
 
 import 'package:QuickBite/features/home/cubit/home_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,9 @@ class QuickBite extends StatelessWidget {
           create: (context) => HomeCubit()..getProducts(),
         ),
         BlocProvider(create: (context) => AuthCubit()),
+        BlocProvider(
+          create: (context) => CartCubit()..getCartItems(),
+        ),
       ],
       child: MaterialApp(
         theme: AppTheme.light,
