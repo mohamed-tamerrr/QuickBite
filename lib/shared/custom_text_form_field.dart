@@ -7,11 +7,13 @@ class CustomTextFormField extends StatefulWidget {
     required this.hintText,
     required this.isPassword,
     required this.controller,
+    this.validator,
   });
 
   final String hintText;
   final bool isPassword;
   final TextEditingController controller;
+  final String? Function(String?)? validator;
 
   @override
   State<CustomTextFormField> createState() =>
@@ -67,12 +69,14 @@ class _CustomTextFormFieldState
           color: AppColors.textSecondary,
         ),
       ),
-      validator: (v) {
-        if (v == null || v.isEmpty) {
-          return 'Please Enter ${widget.hintText}';
-        }
-        return null;
-      },
+      validator:
+          widget.validator ??
+          (v) {
+            if (v == null || v.isEmpty) {
+              return 'Please Enter ${widget.hintText}';
+            }
+            return null;
+          },
       obscureText: _isObscure,
     );
   }

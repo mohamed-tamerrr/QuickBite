@@ -2,7 +2,6 @@ import 'package:QuickBite/core/network/api_exceptions.dart';
 import 'package:QuickBite/features/auth/data/auth_repo.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
@@ -10,30 +9,44 @@ class AuthCubit extends Cubit<AuthState> {
 
   final AuthRepo authRepo = AuthRepo();
 
-  TextEditingController email = TextEditingController(
-    text: "mohamed.tamer@gmail.com",
-  );
-
-  TextEditingController password = TextEditingController(
-    text: "123456789",
-  );
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
   /// Login
   Future<void> login({
     required String email,
     required String password,
   }) async {
-    emit(AuthLoading());
+    emit(LoginLoading());
     try {
       await authRepo.login(email: email, password: password);
-      emit(AuthSuccess());
+      emit(LoginSuccess());
     } catch (e) {
       String error = 'Something went wrong !';
       if (e is Failure) {
         error = e.errorMassage;
       }
-      emit(AuthFailure(error));
+      emit(LoginFailure(error));
+    }
+  }
+
+  /// Signup
+  Future<void> signup({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    emit(SignupLoading());
+    try {
+      final user = await authRepo.signup(
+        email: email,
+        password: password,
+        name: name,
+      );
+      if (user != null) emit(SignupSuccess());
+    } catch (e) {
+      String error = 'unhandled error';
+      if (e is Failure) {
+        error = e.toString();
+      }
+      emit(SignupFailure(error));
     }
   }
 }

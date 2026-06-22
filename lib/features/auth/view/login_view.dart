@@ -1,12 +1,9 @@
 import 'package:QuickBite/core/utils/app_images.dart';
 import 'package:QuickBite/features/auth/cubit/auth_cubit.dart';
-
 import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:gap/gap.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../root.dart';
 import '../../../shared/custom_text.dart';
@@ -14,19 +11,44 @@ import '../../../shared/custom_text_form_field.dart';
 import '../widgets/auth_btn.dart';
 import 'signup_view.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  final TextEditingController email = TextEditingController();
+
+  final TextEditingController password = TextEditingController();
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    email.text = "mohamed.tamer@gmail.com";
+    password.text = "123456789";
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthSuccess) {
+        if (state is LoginSuccess) {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => Root()),
           );
         }
-        if (state is AuthFailure) {
+        if (state is LoginFailure) {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(customSnack(msg: state.errorMsg));
@@ -43,7 +65,7 @@ class LoginView extends StatelessWidget {
                 vertical: 24,
               ),
               child: Form(
-                key: BlocProvider.of<AuthCubit>(context).formKey,
+                key: formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -104,9 +126,7 @@ class LoginView extends StatelessWidget {
 
                           /// Email
                           CustomTextFormField(
-                            controller: context
-                                .read<AuthCubit>()
-                                .email,
+                            controller: email,
                             hintText: 'Email Address',
                             isPassword: false,
                           ),
@@ -114,9 +134,7 @@ class LoginView extends StatelessWidget {
 
                           /// Password
                           CustomTextFormField(
-                            controller: context
-                                .read<AuthCubit>()
-                                .password,
+                            controller: password,
                             hintText: 'Password',
                             isPassword: true,
                           ),
@@ -124,8 +142,10 @@ class LoginView extends StatelessWidget {
 
                           BlocBuilder<AuthCubit, AuthState>(
                             builder: (context, state) {
+                              final cubit = context
+                                  .read<AuthCubit>();
                               final loading =
-                                  state is AuthLoading;
+                                  state is LoginLoading;
                               if (loading) {
                                 return const Center(
                                   child:
@@ -138,29 +158,13 @@ class LoginView extends StatelessWidget {
                                   textColor: Colors.white,
                                   text: 'Login',
                                   onTap: () {
-                                    if (context
-                                        .read<AuthCubit>()
-                                        .formKey
-                                        .currentState!
+                                    if (formKey.currentState!
                                         .validate()) {
-                                      context
-                                          .read<AuthCubit>()
-                                          .login(
-                                            email: context
-                                                .read<
-                                                  AuthCubit
-                                                >()
-                                                .email
-                                                .text
-                                                .trim(),
-                                            password: context
-                                                .read<
-                                                  AuthCubit
-                                                >()
-                                                .password
-                                                .text
-                                                .trim(),
-                                          );
+                                      cubit.login(
+                                        email: email.text.trim(),
+                                        password: password.text
+                                            .trim(),
+                                      );
                                     }
                                   },
                                 );

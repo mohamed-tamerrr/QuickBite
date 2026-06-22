@@ -76,9 +76,13 @@ class AuthRepo {
       if (response is Map<String, dynamic>) {
         final msg = response['message'];
         final code = response['code'];
-        final data = response['data'];
-        final coder = int.tryParse(code);
-        if (coder != 200 || data == null) {
+
+        final statusCode = code is int
+            ? code
+            : int.tryParse(code.toString());
+
+        if ((statusCode != 200 && statusCode != 201) ||
+            response['data'] == null) {
           throw Failure(errorMassage: msg);
         }
         final user = UserModel.fromJson(response['data']);
@@ -150,7 +154,6 @@ class AuthRepo {
       if (response is Map<String, dynamic>) {
         final msg = response['message'];
         final code = response['code'];
-        final data = response['data'];
 
         if (code != 200 && code != 201) {
           throw Failure(errorMassage: msg ?? 'Unknown error');

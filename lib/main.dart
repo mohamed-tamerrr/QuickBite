@@ -1,4 +1,5 @@
 import 'package:QuickBite/features/auth/cubit/auth_cubit.dart';
+import 'package:QuickBite/features/auth/view/login_view.dart';
 import 'package:QuickBite/features/cart/cubit/cart_cubit.dart';
 
 import 'package:QuickBite/features/home/cubit/home_cubit.dart';
@@ -33,7 +34,7 @@ class QuickBite extends StatelessWidget {
         theme: AppTheme.light,
         debugShowCheckedModeBanner: false,
         title: 'QuickBite',
-        home: SplashView(),
+        home: LoginView(),
       ),
     );
   }
