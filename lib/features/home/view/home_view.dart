@@ -1,16 +1,10 @@
-import 'package:QuickBite/core/network/api_exceptions.dart';
-import 'package:QuickBite/features/auth/data/auth_repo.dart';
-import 'package:QuickBite/features/auth/data/user_model.dart';
+import 'package:QuickBite/features/auth/cubit/auth_cubit.dart';
 import 'package:QuickBite/features/home/cubit/home_cubit.dart';
-
-import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-
 import 'package:shimmer/shimmer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-
 import 'product_details_view.dart';
 import '../widgets/card_item.dart';
 import '../widgets/food_category.dart';
@@ -25,30 +19,9 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  UserModel? userModel;
-  final AuthRepo _authRepo = AuthRepo();
-
-  /// GetProfile
-  Future<void> getProfileData() async {
-    try {
-      final user = await _authRepo.getProfileData();
-      setState(() {
-        userModel = user;
-      });
-    } catch (e) {
-      String error = 'Error in profile';
-      if (e is Failure) {
-        error = e.errorMassage;
-      }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(customSnack(msg: error));
-    }
-  }
-
   @override
   void initState() {
-    getProfileData();
+    context.read<AuthCubit>().getProfileData();
     super.initState();
   }
 
@@ -56,7 +29,8 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final cubit = context.read<HomeCubit>();
+        final homeCubit = context.read<HomeCubit>();
+        final authCubit = context.read<AuthCubit>();
         return Skeletonizer(
           enabled: state is HomeLoading,
           child: GestureDetector(
@@ -83,14 +57,18 @@ class _HomeViewState extends State<HomeView> {
                         children: [
                           UserHeader(
                             image:
-                                userModel?.image.toString() ??
+                                authCubit.currentUser?.image
+                                    .toString() ??
                                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvts5aHBstDkR8PigS4RmZkbZy78zpZoSuOw&s",
-                            name: userModel?.name ?? 'ttttamer',
+                            name:
+                                authCubit.currentUser?.name ??
+                                'ttttamer',
                           ),
 
                           SearchField(
-                            controller: cubit.searchController,
-                            onChanged: cubit.searchProducts,
+                            controller:
+                                homeCubit.searchController,
+                            onChanged: homeCubit.searchProducts,
                           ),
                         ],
                       ),
@@ -106,8 +84,8 @@ class _HomeViewState extends State<HomeView> {
                       ),
                       child: SingleChildScrollView(
                         child: FoodCategory(
-                          selectedIndex: cubit.selectedIndex,
-                          categories: cubit.categories,
+                          selectedIndex: homeCubit.selectedIndex,
+                          categories: homeCubit.categories,
                         ),
                       ),
                     ),
@@ -132,7 +110,7 @@ class _HomeViewState extends State<HomeView> {
                       delegate: SliverChildBuilderDelegate(
                         childCount: state is HomeLoading
                             ? 6
-                            : cubit.products?.length ?? 0,
+                            : homeCubit.products?.length ?? 0,
                         (context, index) {
                           /// SHIMMER
                           if (state is HomeLoading) {
@@ -199,7 +177,8 @@ class _HomeViewState extends State<HomeView> {
                             );
                           }
 
-                          final product = cubit.products![index];
+                          final product =
+                              homeCubit.products![index];
 
                           return GestureDetector(
                             onTap: () => Navigator.push(

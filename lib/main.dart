@@ -34,7 +34,7 @@ class QuickBite extends StatelessWidget {
         theme: AppTheme.light,
         debugShowCheckedModeBanner: false,
         title: 'QuickBite',
-        home: LoginView(),
+        home: SplashView(),
       ),
     );
   }
