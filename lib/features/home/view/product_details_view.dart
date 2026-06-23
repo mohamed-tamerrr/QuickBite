@@ -8,7 +8,6 @@ import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-
 import '../widgets/spicy_slider.dart';
 import '../widgets/topping_card.dart';
 import '../../../shared/custom_text.dart';
@@ -31,8 +30,6 @@ class ProductDetailsView extends StatefulWidget {
 class _ProductDetailsViewState
     extends State<ProductDetailsView> {
   double value = 0.5;
-
-  bool isLoading = false;
 
   @override
   void initState() {

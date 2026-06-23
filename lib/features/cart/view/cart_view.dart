@@ -36,6 +36,11 @@ class CartView extends StatelessWidget {
       },
       builder: (context, state) {
         final cubit = context.watch<CartCubit>();
+        if (state is GetCartLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
         return Scaffold(
           body:
               cubit.cartResponse?.cartData.items.isEmpty ?? true
