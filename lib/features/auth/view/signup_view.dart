@@ -1,6 +1,5 @@
 import 'package:QuickBite/core/utils/app_images.dart';
 import 'package:QuickBite/features/auth/cubit/auth_cubit.dart';
-import 'package:QuickBite/features/auth/data/auth_repo.dart';
 import 'package:QuickBite/features/auth/view/login_view.dart';
 import 'package:QuickBite/shared/custom_snack.dart';
 import 'package:flutter/material.dart';
