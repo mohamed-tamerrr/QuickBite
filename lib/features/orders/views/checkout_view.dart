@@ -1,17 +1,15 @@
-import 'package:QuickBite/core/network/api_exceptions.dart';
-import 'package:QuickBite/features/auth/data/auth_repo.dart';
-import 'package:QuickBite/features/auth/data/user_model.dart';
+import 'package:QuickBite/features/auth/cubit/auth_cubit.dart';
 import 'package:QuickBite/features/cart/data/cart_model.dart';
-import 'package:QuickBite/features/orders/data/order_model.dart';
-import 'package:QuickBite/features/orders/data/order_repo.dart';
+import 'package:QuickBite/features/orders/cubit/orders_cubit.dart';
+import 'package:QuickBite/features/orders/widgets/payment_method.dart';
 import 'package:QuickBite/shared/custom_dialog.dart';
-import 'package:QuickBite/shared/custom_snack.dart';
+import 'package:QuickBite/shared/custom_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../shared/custom_button.dart';
-import '../../../shared/custom_text.dart';
 import '../widgets/order_details_widget.dart';
 
 class CheckoutView extends StatefulWidget {
@@ -27,60 +25,26 @@ class CheckoutView extends StatefulWidget {
 }
 
 class _CheckoutViewState extends State<CheckoutView> {
-  final OrderRepo _orderRepo = OrderRepo();
-
-  final AuthRepo _authRepo = AuthRepo();
-  UserModel? userModel;
-  Future<void> _saveOrder() async {
-    try {
-      final orderItems = widget.cartItems.map((item) {
-        return OrderItemRequest(
-          productId: item.productId,
-          quantity: item.quantity,
-          spicy: double.tryParse(item.spicyLevel) ?? 0.0,
-          toppings: [],
-          sideOptions: [],
-        );
-      }).toList();
-
-      final request = OrderRequest(items: orderItems);
-
-      await _orderRepo.saveOrder(request);
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Order placed successfully'),
-        ),
-      );
-    } catch (e) {
-      Failure(errorMassage: e.toString());
-    }
-  }
-
-  /// GetProfile
-  Future<void> getProfileData() async {
-    try {
-      final user = await _authRepo.getProfileData();
-      setState(() {
-        userModel = user;
-      });
-    } catch (e) {
-      String error = 'Error in profile';
-      if (e is Failure) {
-        error = e.errorMassage;
-      }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(customSnack(msg: error));
-    }
-  }
-
   @override
   void initState() {
-    getProfileData();
     super.initState();
+    context.read<AuthCubit>().getProfileData();
+  }
+
+  Future<void> _onCheckoutPressed() async {
+    final cubit = context.read<OrdersCubit>();
+    await cubit.saveOrder(widget.cartItems);
+
+    if (!mounted) return;
+
+    if (cubit.state is OrdersCheckoutSuccess) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const CustomDialog();
+        },
+      );
+    }
   }
 
   @override
@@ -157,9 +121,51 @@ class _CheckoutViewState extends State<CheckoutView> {
                 fontWeight: FontWeight.w700,
               ),
               Gap(20),
-              userModel?.visa == null
-                  ? SizedBox.shrink()
-                  : PaymentMethodView(visaText: userModel!.visa),
+              BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, state) {
+                  final cubit = context.read<AuthCubit>();
+                  final userVisa = cubit.currentUser?.visa;
+
+                  /// Loading
+                  if (state is GetProfileLoading) {
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: Colors.grey.shade200,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.center,
+                        children: const [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                            ),
+                          ),
+                          Gap(12),
+                          CustomText(
+                            text: 'Loading payment methods...',
+                            fontSize: 14,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return PaymentMethodView(
+                    visaText: userVisa,
+                    selectedMethod: cubit.selectedPaymentMethod,
+                    onMethodSelected: cubit.setPaymentMethod,
+                  );
+                },
+              ),
 
               /// Check Box
               Row(
@@ -227,171 +233,43 @@ class _CheckoutViewState extends State<CheckoutView> {
             ),
 
             /// Checkout Button
-            CustomButton(
-              color: Colors.white,
-              width: 150,
-              text: 'Pay Now',
-              onTap: () async {
-                try {
-                  await _saveOrder();
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return CustomDialog();
-                    },
+            BlocConsumer<OrdersCubit, OrdersState>(
+              listener: (context, state) {
+                if (state is OrdersFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.errMsg)),
                   );
-                } catch (e) {
-                  throw Failure(errorMassage: e.toString());
                 }
+              },
+              builder: (context, state) {
+                final isLoading = state is OrdersCheckoutLoading;
+                return CustomButton(
+                  color: Colors.white,
+                  width: 150,
+                  onTap: isLoading ? null : _onCheckoutPressed,
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(
+                                  AppColors.primary,
+                                ),
+                          ),
+                        )
+                      : const CustomText(
+                          text: 'Pay Now',
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                );
               },
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class PaymentMethodView extends StatefulWidget {
-  const PaymentMethodView({super.key, this.visaText});
-
-  final String? visaText;
-
-  @override
-  State<PaymentMethodView> createState() =>
-      _PaymentMethodViewState();
-}
-
-class _PaymentMethodViewState extends State<PaymentMethodView> {
-  int selectedValue = 1;
-
-  Widget paymentCard({
-    required int value,
-    required String title,
-    String? subtitle,
-    required String image,
-  }) {
-    final isSelected = selectedValue == value;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedValue = value;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-
-          border: Border.all(
-            color: isSelected
-                ? AppColors.primary
-                : Colors.grey.shade200,
-            width: isSelected ? 2 : 1,
-          ),
-
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: .05),
-              blurRadius: 15,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-
-        child: Row(
-          children: [
-            Container(
-              width: 55,
-              height: 55,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: .08),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Image.asset(image),
-            ),
-
-            const Gap(16),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-
-                  if (subtitle != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        subtitle,
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              width: 26,
-              height: 26,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected
-                    ? AppColors.primary
-                    : Colors.transparent,
-                border: Border.all(
-                  color: isSelected
-                      ? AppColors.primary
-                      : Colors.grey.shade400,
-                  width: 2,
-                ),
-              ),
-              child: isSelected
-                  ? const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 16,
-                    )
-                  : null,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        paymentCard(
-          value: 1,
-          title: 'Cash on Delivery',
-          image: 'assets/cash.png',
-        ),
-
-        const Gap(16),
-
-        paymentCard(
-          value: 2,
-          title: 'Visa',
-          image: 'assets/visa.png',
-        ),
-      ],
     );
   }
 }

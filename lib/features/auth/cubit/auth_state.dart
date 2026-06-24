@@ -42,3 +42,5 @@ class ProfileFailure extends AuthState {
 }
 
 class LogoutSuccess extends AuthState {}
+
+final class OrdersPaymentMethodChanged extends AuthState {}

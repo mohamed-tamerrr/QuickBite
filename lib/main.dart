@@ -3,6 +3,7 @@ import 'package:QuickBite/features/auth/view/login_view.dart';
 import 'package:QuickBite/features/cart/cubit/cart_cubit.dart';
 
 import 'package:QuickBite/features/home/cubit/home_cubit.dart';
+import 'package:QuickBite/features/orders/cubit/orders_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'splash.dart';
@@ -29,6 +30,7 @@ class QuickBite extends StatelessWidget {
         BlocProvider(
           create: (context) => CartCubit()..getCartItems(),
         ),
+        BlocProvider(create: (context) => OrdersCubit()),
       ],
       child: MaterialApp(
         theme: AppTheme.light,

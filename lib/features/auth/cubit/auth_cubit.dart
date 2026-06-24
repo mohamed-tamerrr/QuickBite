@@ -5,12 +5,23 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 part 'auth_state.dart';
 
+enum PaymentMethod { cashOnDelivery, visa }
+
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
   final AuthRepo authRepo = AuthRepo();
 
   UserModel? currentUser;
+
+  PaymentMethod selectedPaymentMethod =
+      PaymentMethod.cashOnDelivery;
+
+  /// Payment Method
+  void setPaymentMethod(PaymentMethod method) {
+    selectedPaymentMethod = method;
+    emit(OrdersPaymentMethodChanged());
+  }
 
   /// Login
   Future<void> login({

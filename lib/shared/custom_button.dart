@@ -6,38 +6,46 @@ import 'custom_text.dart';
 class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
-    required this.text,
+    this.text,
+    this.child,
     this.onTap,
     this.color,
     this.textColor,
     this.width,
   });
-  final String text;
+
+  final String? text;
+  final Widget? child;
   final void Function()? onTap;
   final Color? color;
   final Color? textColor;
   final double? width;
+
   @override
   Widget build(BuildContext context) {
+    final bool isDisabled = onTap == null;
+    final buttonColor = (color ?? AppColors.primary).withOpacity(
+      isDisabled ? 0.5 : 1.0,
+    );
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: width,
         height: 50,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          // vertical: 15,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
-          color: color ?? AppColors.primary,
+          color: buttonColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Center(
-          child: CustomText(
-            text: text,
-            fontSize: 20,
-            color: textColor,
-          ),
+          child:
+              child ??
+              CustomText(
+                text: text ?? '',
+                fontSize: 20,
+                color: textColor,
+              ),
         ),
       ),
     );
